@@ -34,15 +34,24 @@ class PoiController extends Controller
         } else {
             if ($bounds) {
                 $bounds = explode(',', $bounds);
-                $presicion = 2;
+                $presicion = 4;
                 $nelat = (float) round($bounds[0], $presicion);
                 $nelng = (float) round($bounds[1], $presicion);
                 $swlat = (float) round($bounds[2], $presicion);
                 $swlng = (float) round($bounds[3], $presicion);
-                if ($nelng < 0) $nelng = 180;
+                // if ($nelng < 0) $nelng = 180;
             }
     
-            $pois = Poi::select('poi.*')->where('show', '=', 1);
+            $pois = Poi::select(
+                'poi.id',
+                'poi.name',
+                'poi.type',
+                'poi.lat',
+                'poi.lng',
+                'poi.author',
+                'poi.views',
+                )
+                ->where('show', '=', 1)->where('poi.lat', '<>', 0);
             
             if ($bounds) {
                 $centerLng = ($swlng + $nelng) / 2;
@@ -56,9 +65,9 @@ class PoiController extends Controller
                 }
                 $pois->select(
                     '*', 
-                    DB::raw("ABS(poi.lat - $centerLat) + ABS(poi.lng - $centerLng) AS fromcenter")
+                    DB::raw("SQRT((poi.lat - $centerLat) * (poi.lat - $centerLat) + (poi.lng - $centerLng) * (poi.lng - $centerLng)) AS fromcenter")
                 );
-                $pois->orderBy('fromcenter', 'desc')->limit(100);
+                $pois->orderBy('fromcenter', 'asc')->limit(100);
                 
             } else {
                 $pois->orderBy('views', 'DESC');
@@ -69,7 +78,6 @@ class PoiController extends Controller
                 $pois->join('tags', 'relationship.TAGID', '=', 'tags.id');
                 $pois->where('tags.url', '=', $tag);
                 $pois->with('tags');
-                // $pois->select('tags.lat AS taglat', 'tags.lng AS taglng');
             }
     
             if (Auth::check() && $my) {
@@ -79,8 +87,6 @@ class PoiController extends Controller
             if ($types) {
                 $pois->whereIn('type', $types);
             }
-
-            
             
             if ($page) {
                 $result =  PoiResource::collection($pois->paginate($perPage));
@@ -92,6 +98,7 @@ class PoiController extends Controller
 
             Cache::put($cacheKey, $result, 3600);
         }
+
         return $result;
     }
 

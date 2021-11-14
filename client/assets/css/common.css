@@ -44,3 +44,6 @@ h1 > span {
  color:darkgrey;
  text-transform: lowercase;
 }
+.gm-style-iw-d + button {
+  display: none !important;
+}

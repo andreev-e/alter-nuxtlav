@@ -13,7 +13,7 @@
           <b-tab title="Ваши точки списком" active>
             <Gallery :objects="pois" :loading="loadingPois" />
             <b-pagination
-              v-if="pages > 1"
+              v-if="pages / perPage > 1"
               v-model="page"
               :total-rows="pages"
               :per-page="perPage"
@@ -27,7 +27,7 @@
           <b-tab title="Ваши маршруты">
             <Gallery :objects="routes" type="route" :loading="loadingRoutes" />
             <b-pagination
-              v-if="pagesRoutes > 1"
+              v-if="pagesRoutes / perPageRoutes > 1"
               v-model="pageRoutes"
               :total-rows="pagesRoutes"
               :per-page="perPageRoutes"

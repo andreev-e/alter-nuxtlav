@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { faIndustry, faMonument, faPlaceOfWorship, faLandmark, faTree, faIgloo } from "@fortawesome/free-solid-svg-icons";
+
 export default {
   name: 'Legend',
   props: {
@@ -33,6 +35,14 @@ export default {
         'Еда',
         'Покупки'
       ],
+      icons: {
+        Техноген: [faIndustry, '#A5371E'],
+        Архитектура: [faPlaceOfWorship, '#BD832B'],
+        'История-Культура': [faIgloo, '#0684BF'],
+        Природа: [faTree, '#30B44A'],
+        Музей: [faLandmark, '#8E51A0'],
+        Памятник: [faMonument, '#DF0386'],
+      },
       selected: [],
     }
   },

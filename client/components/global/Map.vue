@@ -20,15 +20,28 @@
           :clickable="true"
           :icon="mylocationMarker"
         />
-        <GmapCluster :zoomOnClick="true">
+        <GmapCluster :gridSize="30" :zoomOnClick="true">
           <GmapMarker
             v-for="poi in mappois"
-            :key="poi.id"
+            :key="poi.id + 'marker'"
             :position="{ lat: poi.lat, lng: poi.lng }"
             :clickable="true"
             @click="open('/poi/' + poi.id)"
             :icon="getIcon(poi)"
-          />
+            @mouseover="poi.showInfoWindow = true"
+            @mouseout="poi.showInfoWindow = false"
+          >
+            <gmap-info-window
+              v-if="poi.showInfoWindow"
+              :opened="true"
+              :options="{
+                maxWidth: 200,
+                pixelOffset: { width: 0, height: -1 }
+              }"
+            >
+              {{ poi.name }}
+            </gmap-info-window>
+          </GmapMarker>
         </GmapCluster>  
       </GmapMap>
     </client-only>
@@ -38,6 +51,7 @@
 <script>
 import { gmapApi } from 'vue2-google-maps/src/main'
 import GmapCluster from "vue2-google-maps/dist/components/cluster";
+// import GMapInfoWindow from "vue2-google-maps/dist/components/infowindow";
 import axios from 'axios'
 import { faIndustry, faMonument, faPlaceOfWorship, faLandmark, faTree, faMapMarker, faIgloo } from "@fortawesome/free-solid-svg-icons";
 
@@ -74,12 +88,12 @@ export default {
   data () {
     return {
       mylocation: false,
-      totalInBounds: 0,
       mylocationMarker: {
         url: 'https://maps.google.com/mapfiles/kml/shapes/man.png',
         size: { width: 64, height: 64, f: 'px', b: 'px' },
         scaledSize: { width: 64, height: 64, f: 'px', b: 'px' }
       },
+      showByIndex: null,
       mappois: [],
       loading: false,
       icons: {
@@ -102,6 +116,8 @@ export default {
         ]
       },
       source: null,
+      logarifm: 4,
+      bounds: null,
     }
   },
   computed: {
@@ -126,13 +142,17 @@ export default {
   },
   methods: {
     async fetchPoisToMap () {
-      if (this.$refs.map.$mapObject && this.center.lat !== 0) {
+      if (this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
+        const bounds = this.$refs.map.$mapObject.getBounds()
+        if (this.bounds === bounds.toUrlValue()) {
+          return;
+        }
+        this.bounds = bounds.toUrlValue();
         if (this.source) {
           this.source.cancel();
         }
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
-        const bounds = this.$refs.map.$mapObject.getBounds()
         if (bounds) {
           try {
             this.loading = true;
@@ -149,7 +169,8 @@ export default {
                 cancelToken: this.source.token
               }
             )
-            this.totalInBounds = data.data.length
+            data.data = data.data.map(item => ({ ...item, showInfoWindow: false }))
+            //showInfoWindow: false
             this.mappois = [...this.mappois, ...data.data] ;
             this.mappois = this.mappois.filter((mappois, index, self) =>
               index === self.findIndex((t) => (
@@ -162,15 +183,12 @@ export default {
             console.log(e);
           }
           finally {
-            
           }
         }
       }
     },
     getIcon(poi) {
       if (this.icons[poi.type]) {
-        const logarifm = 4;
-        // console.log(poi.views + ': ' + Math.log(poi.views + logarifm) / Math.log(logarifm));
         return {
           path: this.icons[poi.type][0].icon[4],
           fillColor: this.icons[poi.type][1],
@@ -181,7 +199,7 @@ export default {
           ),
           strokeWeight: 1,
           strokeColor: "#444",
-          scale: 0.01 * Math.log(poi.views + logarifm) / Math.log(logarifm),
+          scale: 0.01 * Math.log(poi.views + this.logarifm) / Math.log(this.logarifm),
         }
       } else {
         console.log(poi.type);
@@ -195,7 +213,7 @@ export default {
           ),
           strokeWeight: 1,
           strokeColor: "#444",
-          scale: 0.01 * Math.log(poi.views + logarifm) / Math.log(logarifm),
+          scale: 0.01 * Math.log(poi.views + this.logarifm) / Math.log(this.logarifm),
         }
       }
     },
