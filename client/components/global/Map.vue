@@ -20,13 +20,13 @@
           :clickable="true"
           :icon="mylocationMarker"
         />
-        <GmapCluster>
+        <GmapCluster :zoomOnClick="true">
           <GmapMarker
             v-for="poi in mappois"
             :key="poi.id"
             :position="{ lat: poi.lat, lng: poi.lng }"
             :clickable="true"
-            @click="$router.push('/poi/' + poi.id)"
+            @click="open('/poi/' + poi.id)"
             :icon="getIcon(poi)"
           />
         </GmapCluster>  
@@ -198,8 +198,10 @@ export default {
           scale: 0.01 * Math.log(poi.views + logarifm) / Math.log(logarifm),
         }
       }
-
     },
+    open(url) {
+      window.open(url);
+    }
   }
 }
 </script>
