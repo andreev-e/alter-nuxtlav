@@ -27,8 +27,9 @@ class PoiController extends Controller
         $perPage = $request->input('perPage');
         $page = $request->input('page');
         $tag = $request->input('tag');
+        $only = $request->input('only');
 
-        $cacheKey = md5('pois'. json_encode($bounds) . json_encode($types) . $page . $tag);
+        $cacheKey = md5('pois' . json_encode($only) . json_encode($bounds) . json_encode($types) . $page . $tag);
         if (Cache::has($cacheKey)) {
             $result = Cache::get($cacheKey);
         } else {
@@ -63,11 +64,14 @@ class PoiController extends Controller
                 if ($alreadyLoaded) {
                     $pois->whereNotIn('id', explode(',', $alreadyLoaded));
                 }
+                if ($only) {
+                    $pois->whereIn('id', explode(',', $only));
+                }
                 $pois->select(
                     '*', 
                     DB::raw("SQRT((poi.lat - $centerLat) * (poi.lat - $centerLat) + (poi.lng - $centerLng) * (poi.lng - $centerLng)) AS fromcenter")
                 );
-                $pois->orderBy('fromcenter', 'asc')->limit(100);
+                $pois->orderBy('fromcenter', 'asc')->limit(150);
                 
             } else {
                 $pois->orderBy('views', 'DESC');

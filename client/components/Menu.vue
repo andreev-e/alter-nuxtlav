@@ -40,6 +40,12 @@
           <span>готовые треки</span>
         </router-link>
       </li>
+      <li>
+        <router-link :to="{ name: 'izbrannoe' }">
+          <b-icon icon="star-fill" aria-hidden="true" variant="warning" />Избранное
+          <span>Строим маршрут с точками</span>
+        </router-link>
+      </li>
       <li v-if="authenticated">
         <router-link :to="{ name: 'secure' }">
           {{ user.name }}

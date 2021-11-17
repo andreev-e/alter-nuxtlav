@@ -1,7 +1,8 @@
 <template>
   <div class="row nopadding">
-    <div v-if="loading" class="mapspinner">
-      <b-spinner />
+    <div class="mapspinner">
+      <b-spinner v-if="loading" />
+      <span v-if="!loading">{{ mappois.length }}</span>
     </div>
     <client-only>
       <GmapMap
@@ -39,7 +40,7 @@
                 pixelOffset: { width: 0, height: -1 }
               }"
             >
-              {{ poi.name }}
+              <span v-html="poi.name" />
             </gmap-info-window>
           </GmapMarker>
         </GmapCluster>  
@@ -51,7 +52,6 @@
 <script>
 import { gmapApi } from 'vue2-google-maps/src/main'
 import GmapCluster from "vue2-google-maps/dist/components/cluster";
-// import GMapInfoWindow from "vue2-google-maps/dist/components/infowindow";
 import axios from 'axios'
 import { faIndustry, faMonument, faPlaceOfWorship, faLandmark, faTree, faMapMarker, faIgloo } from "@fortawesome/free-solid-svg-icons";
 
@@ -83,6 +83,10 @@ export default {
     types: {
       type: Array,
       default: () => []
+    },
+    chosen: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -128,7 +132,10 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
+    if (this.chosen) {
+      this.fetchPoisToMap();
+    }
   },
   watch: {
     types: function (val) {
@@ -138,11 +145,9 @@ export default {
       this.fetchPoisToMap();
     },
   },
-  mounted () {
-  },
   methods: {
     async fetchPoisToMap () {
-      if (this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
+      if (!this.loading && this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
         const bounds = this.$refs.map.$mapObject.getBounds()
         if (this.bounds === bounds.toUrlValue()) {
           return;
@@ -165,6 +170,7 @@ export default {
                   bounds: bounds.toUrlValue(), 
                   types: this.types, 
                   alreadyLoaded: this.alreadyLoaded,
+                  only: this.chosen ? this.localStorage.chosen.join() : null,
                 },
                 cancelToken: this.source.token
               }

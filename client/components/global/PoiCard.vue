@@ -1,22 +1,28 @@
 <template>
-  <nuxt-link
-    :to="'/poi/' + poi.id"
-    class="poi__card"
-  >
+  <div class="poi__card">
     <div :class="loading ? 'poi_card loading' : 'poi__content'">
       <div v-if="loading" class="spinner">
         <b-spinner />
       </div>
-      <img :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.id + '.jpg'" :title="poi.name" class="img-fluid">
+        <nuxt-link :to="'/poi/' + poi.id">
+          <img :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.id + '.jpg'" :title="poi.name" class="img-fluid">
+        </nuxt-link>
       <div v-if="user && poi.author === user.login" class="canedit">
         <b-button><b-icon-pencil /></b-button>
       </div>
       <div class="poi__card__text">
-        {{ poi.name }}
+        <b-icon 
+          :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
+          aria-hidden="true" 
+          variant="warning" 
+          @click="toggleChosen(poi.id)"
+          class="chosen"
+        />
+        <nuxt-link :to="'/poi/' + poi.id">{{ poi.name }}</nuxt-link>
         <span class="copyright">&copy;{{ poi.author }}</span>
       </div>
     </div>
-  </nuxt-link>
+  </div>
 </template>
 
 <script>
@@ -34,10 +40,28 @@ export default {
       default: false
     }
   },
-  computed: mapGetters({
-    authenticated: 'auth/check',
-    user: 'auth/user'
-  }),
+  data() {
+    return {
+      chosen: [],
+    }
+  },
+  computed: {
+    ...mapGetters({ user: 'auth/user'}),
+  },
+  mounted() {
+  },
+  methods: {
+    toggleChosen(id) {
+      if (this.localStorage.chosen.includes(id)) {
+        const index = this.localStorage.chosen.indexOf(id);
+        if (index > -1) {
+          this.localStorage.chosen.splice(index, 1);
+        }
+      } else {
+        this.localStorage.chosen.push(id);
+      }
+    }
+  }
 }
 </script>
 
@@ -88,5 +112,12 @@ export default {
   }
   .canedit:hover {
     opacity: 1;
+  }
+</style>
+
+
+<style scoped>
+  .chosen {
+    cursor: pointer;
   }
 </style>

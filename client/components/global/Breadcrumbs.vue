@@ -7,11 +7,6 @@
             <b-icon icon="house-door"></b-icon>
           </router-link>
         </li>
-        <li>
-          <router-link to="/region">
-            Все страны
-          </router-link>
-        </li>
         <li
           v-for="(crumb, index) in crumbs"
           :key="crumb.id"

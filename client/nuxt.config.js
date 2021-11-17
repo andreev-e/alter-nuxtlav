@@ -45,6 +45,7 @@ module.exports = {
     '~plugins/axios',
     '~plugins/fontawesome',
     '~plugins/nuxt-client-init',
+    '~plugins/vue-reactive-storage',
     { src: '~plugins/bootstrap', mode: 'client' },
     { src: '~/plugins/vue2-google-maps', mode: 'client', ssr: false },
   ],
