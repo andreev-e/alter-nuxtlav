@@ -7,19 +7,21 @@
         <nuxt-link :to="'/poi/' + poi.id">
           <img :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.id + '.jpg'" :title="poi.name" class="img-fluid">
         </nuxt-link>
-      <div v-if="user && poi.author === user.login" class="canedit">
-        <b-button><b-icon-pencil /></b-button>
+      <div v-if="user && poi.author === user.login" class="your">
+        ваша публикация
       </div>
       <div class="poi__card__text">
-        <b-icon 
-          :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
-          aria-hidden="true" 
-          variant="warning" 
-          @click="toggleChosen(poi.id)"
-          class="chosen"
-        />
-        <nuxt-link :to="'/poi/' + poi.id">{{ poi.name }}</nuxt-link>
-        <span class="copyright">&copy;{{ poi.author }}</span>
+        <nuxt-link :to="'/poi/' + poi.id" class="namelink">
+          <b-icon 
+            :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
+            aria-hidden="true" 
+            variant="warning" 
+            @click.prevent="toggleChosen(poi.id)"
+            class="chosen"
+          />
+          <span v-html="poi.name" />
+        </nuxt-link>
+        {{ views }} / <b-icon-chat /> {{ poi.comments }} / &copy;{{ poi.author }}
       </div>
     </div>
   </div>
@@ -47,6 +49,14 @@ export default {
   },
   computed: {
     ...mapGetters({ user: 'auth/user'}),
+    views: {
+      get: function () {
+        if (this.poi.views > 1000) {
+          return Math.round(this.poi.views / 1000) + 'k';
+        }
+        return this.poi.views;
+      },
+    },
   },
   mounted() {
   },
@@ -79,11 +89,14 @@ export default {
     background-color: rgba(255,255,255, 0.5);
   }
   .poi__card {
-    display: block;
-    box-shadow: 0px 0px 4px -4px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
   }
-  .poi__card a {
+  .namelink {
     text-decoration: none;
+    height: 44px;
+    font-size: 18px;
+    overflow:hidden;
+    display:block;
   }
   .poi__content {
     position: relative;
@@ -100,18 +113,18 @@ export default {
     overflow: hidden;
     line-height: 22px;
     padding: 15px 5px;
+    height: 90px;
   }
-  .copyright {
-    float:right;
-  }
-  .canedit {
+  .your {
+    background-color: #fff;
+    display: block;
+    color: green;
     position:absolute;
     right:0;
     top:0;
     opacity: 0.8;
-  }
-  .canedit:hover {
-    opacity: 1;
+    padding: 3px;
+    font-size:14px;
   }
 </style>
 

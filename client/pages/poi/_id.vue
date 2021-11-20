@@ -37,13 +37,11 @@
             <b-tab title="Фото">
               <div class="view_image">
                 <div id="bigimage">
-                  <img :src="'https://altertravel.ru/full.php?f=/images/' + $route.params.id + '.jpg'" :title="poi.name" class="img-fluid">
+                  <img :src="'https://altertravel.ru/images/' + $route.params.id + '/1.jpg'" :title="poi.name" class="img-fluid">
                 </div>
                 <div id="thumbs">
-                  <div v-for="i in 3" :key="i" class="gal-img">
-                    <a :href="'https://altertravel.ru/full.php?f=/images/' + $route.params.id + '/' + i + '.jpg'" class="lightbox cboxElement">
-                      <img :src="'https://altertravel.ru/thumb.php?f=/images/' + $route.params.id + '/' + i + '.jpg'" :alt="poi.name" class="img-fluid">
-                    </a>
+                  <div v-for="i in poi.images" :key="`img_${i.id}`" class="gal-img">
+                    <img :src="'https://altertravel.ru/images/' + i.path" :alt="poi.name" class="img-fluid">
                   </div>
                 </div>
                 <b-form-input v-if="edit" v-model="poi.copyright" placeholder="Автор фотографий" />
@@ -98,16 +96,24 @@
         <div class="near">
           <b-tabs content-class="mt-3">
             <b-tab title="Ближе всего" active>
-              <p>Контент</p>
+              <b-row>
+                <b-col v-for="poi in poi.nearest" :key="poi.id" cols="3">
+                  <PoiCard :poi="poi" />
+                </b-col>
+              </b-row>
             </b-tab>
             <b-tab
               v-for="tag in tags"
               :key="tag.value"
               :title="tag.text"
             >
-              <p>Контент</p>
+              <b-row>
+                <b-col v-for="poi in poi.nearesttags[tag.text]" :key="poi.id" cols="3">
+                  <PoiCard :poi="poi" />
+                </b-col>
+              </b-row>
             </b-tab>
-            <b-tab title="«Техноген»">
+            <b-tab :title="poi.type ? `«${poi.type}»` : ``">
               <p>Контент</p>
             </b-tab>
             <b-tab title="Ночлег">
@@ -118,7 +124,7 @@
       </div>
     </div>
     <div v-else class="row">
-      <div class="col-12">
+      <div class="col-10">
         <h2>Метки</h2>
         <Skeleton v-if="loadingTags && !edit" />
         <b-form-checkbox-group
@@ -126,6 +132,18 @@
           v-model="poi.tags"
           :options="alltags"
         />
+      </div>
+      <div class="col-2">
+        <h2>Категория</h2>
+        <b-form-select v-model="poi.type">
+          <b-form-select-option value="Техноген">Техноген</b-form-select-option>
+          <b-form-select-option value="Природа">Природа</b-form-select-option>
+          <b-form-select-option value="История-Культура">История-Культура</b-form-select-option>
+          <b-form-select-option value="Памятник">Памятник</b-form-select-option>
+          <b-form-select-option value="Музей">Музей</b-form-select-option>
+          <b-form-select-option value="Архитектура">Архитектура</b-form-select-option>
+          <b-form-select-option value="Природа">Природа</b-form-select-option>
+        </b-form-select>
       </div>
     </div>
     <div class="row">
@@ -313,18 +331,6 @@ export default {
   ul.pages > li {
     background: #eee;
     box-shadow: 2px 2px 5px 0px rgb(50 50 50 / 50%);
-  }
-  .view_image #bigimage {
-    width: 80%;
-    float: left;
-  }
-  .view_image #bigimage img {
-    width: 90%;
-    margin: auto;
-  }
-  #vkladka_photo #thumbs {
-    float: left;
-    width: 20%;
   }
   .gal-img {
     position: relative;

@@ -35,6 +35,10 @@ class PoiResource extends JsonResource
             'copyright' => $this->copyright,
             'type' => $this->type,
             'views' => $this->views,
+            'comments' => $this->comments,
+            'images' => $this->images,
+            'nearest' => $this->nearest,
+            'nearesttags' => $this->nearesttags,
         ];
     }
 }

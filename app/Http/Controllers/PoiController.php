@@ -51,6 +51,7 @@ class PoiController extends Controller
                 'poi.lng',
                 'poi.author',
                 'poi.views',
+                'poi.comments',
                 )
                 ->where('show', '=', 1)->where('poi.lat', '<>', 0);
             

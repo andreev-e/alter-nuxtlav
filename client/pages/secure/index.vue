@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12">
         <h1 class="view">
-          Личный кабинет
+          Личный кабинет автора
         </h1>
       </div>
     </div>

@@ -149,6 +149,9 @@ export default {
     async fetchPoisToMap () {
       if (!this.loading && this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
         const bounds = this.$refs.map.$mapObject.getBounds()
+        if (!bounds) {
+          return;
+        }
         if (this.bounds === bounds.toUrlValue()) {
           return;
         }

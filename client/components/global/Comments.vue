@@ -35,7 +35,7 @@
             max-rows="6"
           />
         </b-form-group>
-        <b-button type="submit" variant="primary">
+        <b-button type="submit" variant="primary" @click="postComment">
           Отправить
         </b-button>
       </b-form>
@@ -84,6 +84,13 @@ export default {
       )
       this.comments = data.data
       this.loading = false
+    },
+    async postComment () {
+      const { data } = await axios.post(
+        '/comments',
+        { text: this.form.text } 
+      )
+      console.log(data);
     }
   }
 }

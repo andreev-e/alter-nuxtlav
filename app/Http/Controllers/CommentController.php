@@ -29,16 +29,6 @@ class CommentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -46,7 +36,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return 'store';
     }
 
     /**
@@ -57,18 +47,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        //
+        return 'show';
     }
 
     /**
@@ -80,7 +59,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        return 'update';
     }
 
     /**
@@ -91,6 +70,6 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        return 'destroy';
     }
 }
