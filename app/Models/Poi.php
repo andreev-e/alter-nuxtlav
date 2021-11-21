@@ -44,6 +44,20 @@ class Poi extends Model
         return $nearest;
     }
 
+    public function getNearesttypeAttribute() 
+    {
+        $nearest = self::select(
+            '*',
+            DB::raw("SQRT(POW((`poi`.`lat` - " . $this->lat . "), 2) + POW((`poi`.`lng` - " . $this->lng . "), 2)) as dist"),
+            )
+            ->where('id', '<>', $this->id)
+            ->where('type', '=', $this->type)
+            ->orderBy('dist', 'asc')
+            ->limit(4)
+            ->get();
+        return $nearest;
+    }
+
     public function getNearesttagsAttribute() 
     {
         $nearest = [];
@@ -59,7 +73,6 @@ class Poi extends Model
                     return $query->where('id', '=', $tag->id);
                 })
                 ->get();
-                //todo tag query
         }
         return $nearest ;
     }

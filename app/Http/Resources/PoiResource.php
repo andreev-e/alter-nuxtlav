@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class PoiResource extends JsonResource
 {
@@ -15,30 +16,46 @@ class PoiResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'lat' => $this->lat,
-            'lng' => $this->lng,
-            'url' => Str::slug($this->name),
-            'description' => htmlspecialchars_decode($this->description),
-            'route' => htmlspecialchars_decode($this->route),
-            'route_o' => htmlspecialchars_decode($this->route_o),
-            'tags' => $this->tags->pluck('id'),
-            // 'locations' => array_merge(
-            //     $this->locations->toArray(),
-            //     [['id' => $this->id, 'name' => $this->name, 'url' => null]] // adding last breadcrumb without link
-            // ),
-            'addon' => $this->addon,
-            'ytb' => $this->ytb,
-            'author' => $this->author,
-            'copyright' => $this->copyright,
-            'type' => $this->type,
-            'views' => $this->views,
-            'comments' => $this->comments,
-            'images' => $this->images,
-            'nearest' => $this->nearest,
-            'nearesttags' => $this->nearesttags,
-        ];
+        $single = false;
+        if ($request->all() === []) {
+            $single = true;
+        }
+        $cacheKey = 'poi_' . $this->id;
+        if (Cache::has($cacheKey)) {
+            $result = Cache::get($cacheKey);
+            $result['cached'] = true;
+        } else {
+            $result =  [
+                'id' => $this->id,
+                'name' => $this->name,
+                'lat' => $this->lat,
+                'lng' => $this->lng,
+                'url' => Str::slug($this->name),
+                'ytb' => $this->ytb,
+                'author' => $this->author,
+                'type' => $this->type,
+                'views' => $this->views,
+                'dist' => $this->dist,
+            ];
+            if ($single) {
+                $result['nearesttags'] = $this->nearesttags;
+                $result['nearesttype'] = $this->nearesttype;
+                $result['nearest'] = $this->nearest;
+                $result['images'] = $this->images;
+                $result['locations'] = array_merge(
+                    $this->locations->toArray(),
+                    [['id' => $this->id, 'name' => $this->name, 'url' => null]] // adding last breadcrumb without link
+                );
+                $result['description'] = $this->description;
+                $result['route'] = $this->route;
+                $result['route_o'] = $this->route_o;
+                $result['comments'] = $this->comments;
+                $result['tags'] = $this->tags->pluck('id');
+                $result['addon'] = $this->addon;
+                $result['copyright'] = $this->copyright;
+                Cache::put($cacheKey, $result, 3600);
+            }
+        }
+        return $result;
     }
 }

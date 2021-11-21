@@ -26,7 +26,7 @@ export default {
     return {
       pois: [],
       loadingPois: true,
-      center: {},
+      center: { lat: null, lng: null },
       types: [],
     }
   },
@@ -74,7 +74,6 @@ export default {
 <style>
 
   h1.view {
-      background: url(/i/star_grey.png) no-repeat left top;
       padding-left: 35px;
       cursor: pointer;
   }

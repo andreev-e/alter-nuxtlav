@@ -4,14 +4,14 @@
       <div class="col-sm-12">
         <h1 class="view">
           <b-row>
-            <b-col cols="8">
+            <b-col cols="10">
               <b-form-input v-if="edit" v-model="poi.name" />
               <span v-else>
-                {{ poi.name }}
+                <span v-html="poi.name" />
               </span>
               <b-skeleton v-if="loading && !edit" width="90%" />
             </b-col>
-            <b-col cols="4">
+            <b-col cols="2">
               <b-button-group v-if="user && poi.author === user.login" style="float:right">
                 <b-button v-if="!edit" @click="edit = true">
                   Редактировать
@@ -29,14 +29,14 @@
         </h1>
       </div>
     </div>
-    <Breadcrumbs :list="this.poi.locations" />
+    <Breadcrumbs :list="poi.locations" />
     <div class="row inner">
       <div class="col-sm-8 object-full">
         <div class="near">
           <b-tabs>
             <b-tab title="Фото">
               <div class="view_image">
-                <div id="bigimage">
+                <div v-if="loading" id="bigimage">
                   <img :src="'https://altertravel.ru/images/' + $route.params.id + '/1.jpg'" :title="poi.name" class="img-fluid">
                 </div>
                 <div id="thumbs">
@@ -114,9 +114,13 @@
               </b-row>
             </b-tab>
             <b-tab :title="poi.type ? `«${poi.type}»` : ``">
-              <p>Контент</p>
+              <b-row>
+                <b-col v-for="poi in poi.nearesttype" :key="poi.id" cols="3">
+                  <PoiCard :poi="poi" />
+                </b-col>
+              </b-row>
             </b-tab>
-            <b-tab title="Ночлег">
+            <b-tab title="Ночлег рядом">
               <p>Контент</p>
             </b-tab>
           </b-tabs>
@@ -332,13 +336,7 @@ export default {
     background: #eee;
     box-shadow: 2px 2px 5px 0px rgb(50 50 50 / 50%);
   }
-  .gal-img {
-    position: relative;
-    margin-bottom: 12px;
-    text-align: center;
-    max-width: 150px;
-    display: inline-block;
-    margin-right: 10px;
-    margin-bottom: 10px;
+  .near {
+    padding: 20px 20px 25px;
   }
 </style>

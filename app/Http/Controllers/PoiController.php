@@ -28,8 +28,11 @@ class PoiController extends Controller
         $page = $request->input('page');
         $tag = $request->input('tag');
         $only = $request->input('only');
+        if ($only) {
+            $bounds = null;
+        }
 
-        $cacheKey = md5('pois' . json_encode($only) . json_encode($bounds) . json_encode($types) . $page . $tag);
+        $cacheKey = 'pois_' . md5(json_encode($only) . json_encode($bounds) . json_encode($types) . $page . $tag);
         if (Cache::has($cacheKey)) {
             $result = Cache::get($cacheKey);
         } else {
@@ -40,7 +43,6 @@ class PoiController extends Controller
                 $nelng = (float) round($bounds[1], $presicion);
                 $swlat = (float) round($bounds[2], $presicion);
                 $swlng = (float) round($bounds[3], $presicion);
-                // if ($nelng < 0) $nelng = 180;
             }
     
             $pois = Poi::select(
@@ -65,17 +67,21 @@ class PoiController extends Controller
                 if ($alreadyLoaded) {
                     $pois->whereNotIn('id', explode(',', $alreadyLoaded));
                 }
-                if ($only) {
-                    $pois->whereIn('id', explode(',', $only));
-                }
+
                 $pois->select(
                     '*', 
                     DB::raw("SQRT((poi.lat - $centerLat) * (poi.lat - $centerLat) + (poi.lng - $centerLng) * (poi.lng - $centerLng)) AS fromcenter")
                 );
-                $pois->orderBy('fromcenter', 'asc')->limit(150);
+                $pois->orderBy('fromcenter', 'asc');
+                $pois->limit(1000);
                 
             } else {
                 $pois->orderBy('views', 'DESC');
+            }
+
+            if ($only) {
+                $pois->whereIn('id', explode(',', $only));
+                $pois->limit(100);
             }
     
             if ($tag) {     
@@ -92,10 +98,10 @@ class PoiController extends Controller
             if ($types) {
                 $pois->whereIn('type', $types);
             }
-            
+                        
             if ($page) {
                 $result =  PoiResource::collection($pois->paginate($perPage));
-            } elseif ($bounds) {
+            } elseif ($bounds || $only) {
                 $result =  PoiResource::collection($pois->get());
             } else {
                 $result =  PoiResource::collection($pois->limit(4)->get()); 
@@ -104,6 +110,8 @@ class PoiController extends Controller
             Cache::put($cacheKey, $result, 3600);
         }
 
+        // echo '1';
+        // return '';
         return $result;
     }
 

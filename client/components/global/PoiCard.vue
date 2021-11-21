@@ -8,7 +8,7 @@
           <img :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.id + '.jpg'" :title="poi.name" class="img-fluid">
         </nuxt-link>
       <div v-if="user && poi.author === user.login" class="your">
-        ваша публикация
+        опубликовали вы
       </div>
       <div class="poi__card__text">
         <nuxt-link :to="'/poi/' + poi.id" class="namelink">
@@ -21,7 +21,10 @@
           />
           <span v-html="poi.name" />
         </nuxt-link>
-        {{ views }} / <b-icon-chat /> {{ poi.comments }} / &copy;{{ poi.author }}
+        <div v-if="poi.dist" class="above_img">
+          {{ poi.dist }}
+        </div>
+        <b-icon-eye /> {{ views }} / <b-icon-chat v-if="poi.comments" /> {{ poi.comments ? poi.comments + ' /' : ''  }} &copy;&nbsp;{{ poi.author }}
       </div>
     </div>
   </div>
@@ -40,7 +43,7 @@ export default {
     loading: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
@@ -133,4 +136,16 @@ export default {
   .chosen {
     cursor: pointer;
   }
+  .above_img {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width: 100%;
+    margin-top: 50%;
+    margin-left: -15px;
+    text-align: center;
+    font-size: 2em;
+    color: rgba(255,255,255,0.8);
+    text-shadow: #000 2px 3px 5px;
+}
 </style>

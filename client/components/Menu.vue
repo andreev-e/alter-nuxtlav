@@ -20,7 +20,7 @@
       </li>
       <li class="region_select">
         <a href="#">
-          Метки
+          Теги
           <span>выбрать</span>
         </a>
         <ul>
@@ -42,7 +42,8 @@
       </li>
       <li>
         <router-link :to="{ name: 'izbrannoe' }">
-          <b-icon icon="star-fill" aria-hidden="true" variant="warning" />Избранное
+          <b-icon icon="star-fill" aria-hidden="true" variant="warning" />
+            Избранное {{ localStorage.chosen.length ? `(${localStorage.chosen.length})` : '' }}
           <span>Строим маршрут с точками</span>
         </router-link>
       </li>

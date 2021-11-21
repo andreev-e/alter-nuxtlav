@@ -1,5 +1,5 @@
 <template>
-  <div v-if="list.length" class="content row">
+  <div v-if="crumbs.length" class="content row">
     <div class="navigation col-12">
       <ul>
         <li class="first">
@@ -11,7 +11,7 @@
           v-for="(crumb, index) in crumbs"
           :key="crumb.id"
         >
-          <router-link v-if="crumb.url" :to="crumb.url" @click.native="pop(index)">
+          <router-link v-if="crumb.url" :to="crumb.url">
             {{ crumb.name }}
           </router-link>
           <span v-else>
@@ -32,9 +32,9 @@
 export default {
   name: 'Breadcrumbs',
   props: {
-    list: {
+    crumbs: {
       type: Array,
-      required: true,
+      required: false,
       default: () => []
     },
     loading: {
@@ -42,43 +42,6 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
-      crumbs: []
-    }
-  },
-  watch: {
-    list: {
-      handler (val) {
-        localStorage.breadcrumbs = JSON.stringify(val)
-        this.crumbs = val
-      }
-    }
-  },
-  created () {
-    if (process.client) {
-      if (localStorage.breadcrumbs) {
-        try {
-          this.crumbs = JSON.parse(localStorage.breadcrumbs)
-        } catch (e) {
-          return []
-        }
-      } else {
-        localStorage.breadcrumbs = JSON.stringify(this.list)
-        this.crumbs = this.list
-      }
-    } else {
-      this.crumbs = this.list
-    }
-  },
-  methods: {
-    pop (index) {
-      for (let i = 0; i < (this.crumbs.length - index); i++) {
-        this.crumbs.pop()
-      }
-      localStorage.breadcrumbs = JSON.stringify(this.crumbs)
-    }
-  }
 }
 </script>
 
