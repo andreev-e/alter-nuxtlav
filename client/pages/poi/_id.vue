@@ -4,14 +4,14 @@
       <div class="col-sm-12">
         <h1 class="view">
           <b-row>
-            <b-col cols="10">
+            <b-col cols="9">
               <b-form-input v-if="edit" v-model="poi.name" />
               <span v-else>
                 <span v-html="poi.name" />
               </span>
               <b-skeleton v-if="loading && !edit" width="90%" />
             </b-col>
-            <b-col cols="2">
+            <b-col cols="3">
               <b-button-group v-if="user && poi.author === user.login" style="float:right">
                 <b-button v-if="!edit" @click="edit = true">
                   Редактировать

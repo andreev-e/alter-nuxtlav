@@ -1,5 +1,31 @@
 <template>
   <div class="row nopadding">
+    <div class="legend-title col-sm-12">
+      <b>Легенда карты и фильтры</b>
+      <div style="display:flex; align-items:center; justify-content: space-around">
+        <b-form-checkbox-group
+          v-model="selectedTypes"
+          :options="typesSelect"
+          @change="filterTypes"
+        />
+      </div>
+      <hr v-if="mode === 'chosen'">
+      <b-row v-if="mode === 'chosen'">
+        <b-col sm="6">
+          <label for="otdalenie">Отклонение от маршрута, {{ otdalenie }} км:</label>
+        </b-col>
+        <b-col sm="5">
+          <b-input 
+            id="otdalenie" 
+            v-model="otdalenie" 
+            min="5" 
+            max="50" 
+            type="range"
+            @change="recountAdditional"
+          />
+        </b-col>
+      </b-row>
+    </div>
     <div class="mapspinner">
       <b-spinner v-if="loading" />
     </div>
@@ -13,9 +39,9 @@
         :zoom="zoom"
         map-type-id="terrain"
         :options="mapOptions"
-        @dragend="fetchPoisToMap"
-        @zoom_changed="fetchPoisToMap"
-        @idle="fetchPoisToMap"
+        @dragend="mapMoved"
+        @zoom_changed="mapMoved"
+        @idle="mapIdle"
       >
         <GmapMarker
           v-if="mylocation"
@@ -25,14 +51,14 @@
         />
         <GmapMarker
           v-if="chosen.length"
-          :position="startLocation"
+          :position="localStorage.startLocation"
           :icon="startMarker"
           :draggable="true"
           @dragend="dragStart"
         />
         <GmapMarker
           v-if="chosen.length"
-          :position="finishLocation"
+          :position="localStorage.finishLocation"
           :icon="finishMarker"
           :draggable="true"
           @dragend="dragFinish"
@@ -120,22 +146,21 @@ export default {
       type: Number,
       default: null
     },
-    types: {
-      type: Array,
-      default: () => []
-    },
     chosen: {
       type: Array,
       default: () => []
+    },
+    mode: {
+      type: String,
+      default: null
     }
   },
   data () {
     return {
+      initialLoadDone: false,
       mylocation: false,
-      otdalenie: 50,
+      otdalenie: 5,
       total: 0,
-      startLocation: { lat: 55.7522, lng: 37.6156 },
-      finishLocation: { lat: 55.7622, lng: 37.6356 },
       mylocationMarker: {
         url: 'https://maps.google.com/mapfiles/kml/shapes/man.png',
         size: { width: 64, height: 64, f: 'px', b: 'px' },
@@ -169,15 +194,24 @@ export default {
           }
         ]
       },
+      types: [
+        'Архитектура',
+        'История/Культура',
+        'Природа',
+        'Техноген',
+        'Памятник',
+        'Музей',
+        'Ночлег',
+        'Еда',
+        'Покупки'
+      ],
+      selectedTypes: [],
       source: null,
       logarifm: 4,
       bounds: null,
+      additional: [],
+      route: [],
     }
-  },
-  watch: {
-    chosen: function (val) {
-      console.log('chosenChanged', val);
-    },
   },
   computed: {
     google: VueGoogleMaps.gmapApi,
@@ -191,6 +225,11 @@ export default {
         }
       }
     },
+    typesSelect: {
+      get: function () {
+        return this.types.map((item) => ({ text: item, value: item }));
+      },
+    },
     poisForRoute: {
       get: function () {
         return this.chosen.map((item) => ({ location: { lat: item.lat, lng: item.lng }, stopover: true }));
@@ -198,32 +237,24 @@ export default {
     },
   },
   watch: {
-    types: function (val) {
-      this.fetchPoisToMap();
-    },
-    center: function (val) {
-      this.fetchPoisToMap();
-    },
-    chosen: function (val) {
-      this.calcRoute();
-    },
+    chosen: {
+      handler () {
+        this.calcRoute();
+      }
+    }
+  },
+  mounted() {
+    this.selectedTypes = this.types;
   },
   methods: {
-    async fetchPoisToMap () {
-      if (this.chosen.length) {
-        return;
-      }
+    async fetchPoisToMap (force = false) {
       console.log('fetchPoisToMap');
       if (!this.loading && this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
         const bounds = this.$refs.map.$mapObject.getBounds()
-        if (!bounds) {
+        if (!force && !bounds) {
           console.log('nobounds');
           return;
         }
-        // if (this.bounds === bounds.toUrlValue()) {
-        //   console.log('equalbounds');
-        //   return;
-        // }
         this.bounds = bounds.toUrlValue();
         if (this.source) {
           this.source.cancel();
@@ -239,10 +270,11 @@ export default {
                 params: { 
                   tag: this.tag, 
                   my: this.my, 
-                  bounds: bounds.toUrlValue(), 
-                  types: this.types.lenth < 9 ? this.types.lenth : [] , 
+                  bounds: this.mode !== 'chosen' ? bounds.toUrlValue() : null, 
+                  types: this.selectedTypes.lenth < 9 ? this.selectedTypes.lenth : [] , 
                   alreadyLoaded: this.alreadyLoaded,
-                  only: this.chosen.length ? this.chosen : null,
+                  additional: this.mode === 'chosen' ? this.additional.join('!') : null,
+                  otdalenie: this.mode === 'chosen' ? this.otdalenie : null,
                 },
                 cancelToken: this.source.token
               }
@@ -262,9 +294,6 @@ export default {
           finally {
           }
         }
-      }
-      if (this.chosen.length) {
-        this.calcRoute();
       }
     },
     getIcon(poi) {
@@ -300,17 +329,19 @@ export default {
     open(url) {
       window.open(url);
     },
-    calcRoute() {
-      this.loading = true;
+    async calcRoute() {
       console.log('calcRoute');
-      const start = { location: this.startLocation };
-      const end = { location: this.finishLocation };
+      this.loading = true;
+      const start = { location: this.localStorage.startLocation };
+      const end = { location: this.localStorage.finishLocation };
       var request = {
           origin: start,
           destination: end,
-          waypoints: this.poisForRoute, optimizeWaypoints: true,
+          waypoints: this.poisForRoute, 
+          optimizeWaypoints: true,
           travelMode: google.maps.DirectionsTravelMode.DRIVING
       };
+      console.log(request);
 
       if (directions === null) {
         directions = new google.maps.DirectionsService();
@@ -319,41 +350,16 @@ export default {
         directionsDisplay.setOptions({ suppressMarkers: true });
       }
 
-      directions.route(request)
+      await directions.route(request)
         .then((response) => {
-          console.log(response);
+          this.additional = [];
           directionsDisplay.setDirections(response);
           this.totalDistance(directionsDisplay.directions);
-          // var myRoute = response.routes[0].legs[0];
-          // var route = response.routes[0];
-          // var points_search = '';
-          // var cont_steps = 0;
-          // var prevpoint = start;
-          // var prevpoint2 = start;
-          // const all_points = [];
-          // route.legs.forEach(function (leg) {
-          //   leg.steps.forEach(function (step) {
-          //     step.path.forEach(function(point) {
-          //       let latlng = point.toString();
-          //       latlng = latlng.replace(')','');
-          //       latlng = latlng.replace('(','');
-          //       let latlng_arr =  latlng.split(',');
-          //       let lat1 = parseFloat(latlng_arr[0]);
-          //       let lng1 = parseFloat(latlng_arr[1]);
-          //       if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint2, point) > 50 * 100) {
-          //         all_points.push(point);
-          //         prevpoint2=point;
-          //       }
-          //       if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint, point) > 50 * 750) {
-          //         points_search=points_search+lat1.toFixed(4)+'%'+lng1.toFixed(4)+'!';
-          //         cont_steps = cont_steps+1;
-          //         prevpoint = point;
-          //       }
-          //     });
-          //   });
-          // });
+          this.route = response.routes[0];
+          this.recountAdditional();
       });
       this.loading = false;
+      this.fetchPoisToMap();
     },
     totalDistance(result) {
       var myroute = result.routes[0].legs;
@@ -361,20 +367,65 @@ export default {
       console.log(this.total);
       this.total = this.total / 1000;
       this.total = Math.round(this.total * 10) / 10
-      // if (this.total > 1000) { 
-      //   this.otdalenie = 50; 
-      // }
+      if (this.total > 1000) { 
+        this.otdalenie = 50; 
+      }
     },
     dragStart (location) {
-      this.startLocation.lat = location.latLng.lat();
-      this.startLocation.lng = location.latLng.lng();
+      this.localStorage.startLocation.lat = location.latLng.lat();
+      this.localStorage.startLocation.lng = location.latLng.lng();
       this.calcRoute();
     },
     dragFinish (location) {
-      this.finishLocation.lat = location.latLng.lat();
-      this.finishLocation.lng = location.latLng.lng();
+      this.localStorage.finishLocation.lat = location.latLng.lat();
+      this.localStorage.finishLocation.lng = location.latLng.lng();
       this.calcRoute();
-    }
+    },
+    filterTypes () {
+      if (this.selectedTypes.length === 0) {
+        this.selectedTypes = this.types;
+      }
+      this.mappois = this.mappois.filter(item => this.selectedTypes.indexOf(item.type)>-1)
+    },
+    recountAdditional () {
+      console.log('recountAdditional');
+      let prevpoint = this.startLocation;
+      let prevpoint2 = this.startLocation;
+      if (this.route) {
+        this.route.legs.forEach(leg => {
+          leg.steps.forEach(step => {
+            step.path.forEach(point => {
+              let lat1 = point.lat();
+              let lng1 = point.lng();
+              if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint2, point) > this.otdalenie * 100) {
+                prevpoint2 = point;
+              }
+              if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint, point) > this.otdalenie * 750) {
+                this.additional.push(lat1.toFixed(4)+';'+lng1.toFixed(4));
+                prevpoint = point;
+              }
+            });
+          });
+        });
+      }
+      this.mappois = [];
+      this.fetchPoisToMap();
+    },
+    mapMoved () {
+      if (this.mode !== 'chosen') { 
+        this.fetchPoisToMap();
+      }
+    },
+    mapIdle () {
+      if (!this.initialLoadDone) {
+        if (this.mode === 'chosen') { 
+          this.calcRoute();
+        } else {
+          this.fetchPoisToMap();
+        }
+        this.initialLoadDone = true;
+      }
+    },
   }
 }
 </script>
@@ -407,5 +458,17 @@ export default {
   justify-content: center;
   z-index: 2;
   background-color:#ebf1f5;
+}
+.legend-title {
+  color: #fff;
+  background: #7495AA;
+  margin: 0 auto;
+  text-align: center;
+  vertical-align: middle;
+  padding: 3px 0;
+  position: relative;
+  z-index: 0;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

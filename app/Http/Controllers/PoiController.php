@@ -28,11 +28,14 @@ class PoiController extends Controller
         $page = $request->input('page');
         $tag = $request->input('tag');
         $only = $request->input('only');
-        if ($only) {
+        $additional = $request->input('additional');
+        $otdalenie = $request->input('otdalenie');
+
+        if ($only || $otdalenie) {
             $bounds = null;
         }
 
-        $cacheKey = 'pois_' . md5(json_encode($only) . json_encode($bounds) . json_encode($types) . $page . $tag);
+        $cacheKey = 'pois_' . md5($additional . json_encode($only) . json_encode($bounds) . json_encode($types) . $page . $tag);
         if (Cache::has($cacheKey)) {
             $result = Cache::get($cacheKey);
         } else {
@@ -56,6 +59,24 @@ class PoiController extends Controller
                 'poi.comments',
                 )
                 ->where('show', '=', 1)->where('poi.lat', '<>', 0);
+
+            if ($additional && $otdalenie) {
+                $additional = explode('!', $additional);
+                $pois->where(function ($where) use ($additional, $otdalenie) {
+                    foreach ($additional as $point) {
+                        $point = explode(";", $point);
+                        $where->orWhereRaw('(6371 *
+                        acos(
+                            cos(radians(' . $point[0] . '))
+                         * cos(radians(lat))
+                         *cos(radians(lng) - radians(' . $point[1] . '))
+                         + sin(radians( ' .$point[0] . '))
+                         * sin(radians(lat)))
+                               ) < ' . $otdalenie . '');
+                        }
+                    });
+                $pois->limit(1000);
+            }
             
             if ($bounds) {
                 $centerLng = ($swlng + $nelng) / 2;
@@ -80,7 +101,8 @@ class PoiController extends Controller
             }
 
             if ($only) {
-                $pois->whereIn('id', explode(',', $only));
+                $only = explode(',', $only);
+                $pois->whereIn('id', $only);
                 $pois->limit(100);
             }
     
@@ -101,7 +123,7 @@ class PoiController extends Controller
                         
             if ($page) {
                 $result =  PoiResource::collection($pois->paginate($perPage));
-            } elseif ($bounds || $only) {
+            } elseif ($bounds || $only || $additional) {
                 $result =  PoiResource::collection($pois->get());
             } else {
                 $result =  PoiResource::collection($pois->limit(4)->get()); 

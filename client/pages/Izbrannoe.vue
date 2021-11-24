@@ -8,7 +8,7 @@
       </div>
     </div>
     <Breadcrumbs :list="[{name: 'Избранное', url: '' }]" />
-    <Map :chosen="pois" />
+    <Map :chosen="pois" mode="chosen" />
     <div class="row">
       <div class="col-12 text-center m-3">
         <b-spinner v-if="loadingPois && pois.length === 0" />
@@ -44,7 +44,6 @@ export default {
   },
   methods: {
     async fetchPois () {
-      console.log('fetchPoisIzbr');
       this.loadingPois = true;
       if (this.localStorage.chosen.length) {
         const { data } = await axios.get(

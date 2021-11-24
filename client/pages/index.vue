@@ -7,7 +7,6 @@
         </h1>
       </div>
     </div>
-    <Legend v-model="types" />
     <Map :center="center" :types="types" />
     <Gallery :objects="pois" :loading="loadingPois" />
     <div class="row">
