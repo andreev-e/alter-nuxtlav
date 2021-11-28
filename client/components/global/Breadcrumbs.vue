@@ -8,7 +8,7 @@
           </router-link>
         </li>
         <li
-          v-for="(crumb, index) in crumbs"
+          v-for="(crumb) in crumbs"
           :key="crumb.id"
         >
           <router-link v-if="crumb.url" :to="crumb.url">
@@ -34,7 +34,7 @@ export default {
   props: {
     crumbs: {
       type: Array,
-      required: false,
+      required: true,
       default: () => []
     },
     loading: {

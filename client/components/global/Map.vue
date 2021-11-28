@@ -32,7 +32,7 @@
     <div class="mapcomment">
       <span v-if="total">Маршрут длиной {{ total }} км</span>
     </div>
-    <client-only>
+    <client-only v-if="center.lat !== null || this.mode === 'chosen'">
       <GmapMap
         ref="map"
         :center="center"
@@ -132,7 +132,7 @@ export default {
   props: {
     center: {
       type: Object,
-      default: () => { return { lat: 55, lng: 45 } }
+      default: () => ({ lat: null, lng: null })
     },
     tag: {
       type: String,
@@ -247,11 +247,11 @@ export default {
     this.selectedTypes = this.types;
   },
   methods: {
-    async fetchPoisToMap (force = false) {
-      console.log('fetchPoisToMap');
-      if (!this.loading && this.$refs.map && this.$refs.map.$mapObject && this.center.lat !== 0) {
+    async fetchPoisToMap () {
+      console.log('fetchPoisToMap', this.center.lat);
+      if (this.$refs.map && this.$refs.map.$mapObject) {
         const bounds = this.$refs.map.$mapObject.getBounds()
-        if (!force && !bounds) {
+        if (!bounds) {
           console.log('nobounds');
           return;
         }
@@ -264,6 +264,7 @@ export default {
         if (bounds) {
           try {
             this.loading = true;
+            console.log('request sending...');
             const { data } = await axios.get(
               '/pois',
               { 
@@ -294,6 +295,9 @@ export default {
           finally {
           }
         }
+      } else  {
+        console.log('cancel load pois')
+        return;
       }
     },
     getIcon(poi) {
@@ -401,6 +405,7 @@ export default {
       this.fetchPoisToMap();
     },
     mapMoved () {
+      console.log('mapMoved')
       if (this.mode !== 'chosen') { 
         this.fetchPoisToMap();
       }

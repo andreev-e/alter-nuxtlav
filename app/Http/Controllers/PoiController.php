@@ -81,6 +81,9 @@ class PoiController extends Controller
             if ($bounds) {
                 $centerLng = ($swlng + $nelng) / 2;
                 $centerLat = ($swlat + $nelat) / 2;
+                if ($centerLng === 0 || $centerLat === 0) {
+                    return ;
+                }
                 $pois->where('poi.lng', '<', max($swlng, $nelng))
                     ->where('poi.lng', '>', min($swlng, $nelng))
                     ->where('poi.lat', '<', max($nelat, $swlat))

@@ -1,5 +1,13 @@
 <template>
   <div class="container page">
+    <div class="row">
+      <div class="col-sm-12">
+        <h1 class="view">
+          Маршруты Альтернативного Путеводителя
+        </h1>
+      </div>
+    </div>
+    <Breadcrumbs :crumbs="[{name: 'Маршруты', url: '' }]" />
     <Gallery :objects="routes" type="route" :loading="loading" />
     <div class="row">
       <div class="col-12">
@@ -45,10 +53,6 @@ export default {
         this.fetchRoutes()
       }
     }
-  },
-  created () {
-    this.$store.commit('page/setBreadcrumbs', [])
-    this.$store.commit('page/setH1', 'Маршруты Альтернативного Путеводителя')
   },
   mounted () {
     this.fetchRoutes()

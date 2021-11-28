@@ -8,9 +8,9 @@
         </h1>
       </div>
     </div>
-    <Breadcrumbs :list="tag.locations" />
+    <Breadcrumbs :crumbs="tag.locations" />
     <TwoPanels :left="tag.children" :right="[]" />
-    <Map :center="{ lat: tag.lat, lng: tag.lng }" :zoom="tag.zoom" />
+    <Map ref="map" :center="center" :zoom="tag.zoom" />
     <div class="row">
       <div class="col-12">
         <h2>Достопримечательности</h2>
@@ -43,6 +43,7 @@ export default {
         lat: 0,
         lng: 0,
       },
+      center: { lat: null, lng: null },
       page: 1,
       pages: null,
       perPage: 12,
@@ -52,7 +53,7 @@ export default {
   },
   async fetch () {
     this.id = this.$route.params.id
-    await this.fetchTagBackend()
+    await this.fetchTag()
     await this.fetchPois()
   },
   head: {
@@ -74,14 +75,13 @@ export default {
   mounted () {
   },
   methods: {
-    async fetchTagBackend () {
-      const { data } = await axios.get('/tags/' + this.id)
-      this.tag = data.tag
-      this.loadingRegion = false
-    },
     async fetchTag () {
       const { data } = await axios.get('/tags/' + this.id)
-      this.tag = data.tag
+      this.tag = data.tag;
+      this.center.lat = this.tag.lat;
+      this.center.lng = this.tag.lng;
+      // this.$refs.map.fetchPoisToMap();
+      this.loadingRegion = false
     },
     async fetchPois () {
       this.loadingPois = true

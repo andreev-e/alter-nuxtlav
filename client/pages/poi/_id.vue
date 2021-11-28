@@ -29,7 +29,7 @@
         </h1>
       </div>
     </div>
-    <Breadcrumbs :list="poi.locations" />
+    <Breadcrumbs :crumbs="poi.locations" />
     <div class="row inner">
       <div class="col-sm-8 object-full">
         <div class="near">
