@@ -22,7 +22,7 @@
           <span v-html="poi.name" />
         </nuxt-link>
         <div v-if="poi.dist" class="above_img">
-          {{ poi.dist }}
+          {{ poi.dist > 10 ? Math.round(poi.dist) : poi.dist }} км
         </div>
         <b-icon-eye /> {{ views }} / <b-icon-chat v-if="poi.comments" /> {{ poi.comments ? poi.comments + ' /' : ''  }} &copy;&nbsp;{{ poi.author }}
       </div>

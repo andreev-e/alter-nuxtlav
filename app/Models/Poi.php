@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\PoiResourceNear;
 
 class Poi extends Model
 {
@@ -33,28 +34,42 @@ class Poi extends Model
 
     public function getNearestAttribute() 
     {
-        $nearest = self::select(
+        $nearest = PoiResourceNear::collection(self::select(
             '*',
-            DB::raw("SQRT(POW((`poi`.`lat` - " . $this->lat . "), 2) + POW((`poi`.`lng` - " . $this->lng . "), 2)) as dist"),
+            DB::raw("ROUND (6371 *
+            acos(
+                cos(radians(" . $this->lat . "))
+             * cos(radians(lat))
+             *cos(radians(lng) - radians(" . $this->lng . "))
+             + sin(radians(" . $this->lat . "))
+             * sin(radians(lat)))
+                   , 2) as dist"),
             )
             ->where('id', '<>', $this->id)
             ->orderBy('dist', 'asc')
             ->limit(4)
-            ->get();
+            ->get());
         return $nearest;
     }
 
     public function getNearesttypeAttribute() 
     {
-        $nearest = self::select(
+        $nearest = PoiResourceNear::collection(self::select(
             '*',
-            DB::raw("SQRT(POW((`poi`.`lat` - " . $this->lat . "), 2) + POW((`poi`.`lng` - " . $this->lng . "), 2)) as dist"),
+            DB::raw("ROUND (6371 *
+            acos(
+                cos(radians(" . $this->lat . "))
+             * cos(radians(lat))
+             *cos(radians(lng) - radians(" . $this->lng . "))
+             + sin(radians(" . $this->lat . "))
+             * sin(radians(lat)))
+                , 2) as dist"),
             )
             ->where('id', '<>', $this->id)
             ->where('type', '=', $this->type)
             ->orderBy('dist', 'asc')
             ->limit(4)
-            ->get();
+            ->get());
         return $nearest;
     }
 
@@ -63,18 +78,25 @@ class Poi extends Model
         $nearest = [];
         $tags = $this->tags()->get();
         foreach ($tags as $tag) {
-            $nearest[$tag->name] = self::select(
+            $nearest[$tag->name] = PoiResourceNear::collection(self::select(
                 '*',
-                DB::raw("SQRT(POW((`poi`.`lat` - " . $this->lat . "), 2) + POW((`poi`.`lng` - " . $this->lng . "), 2)) as dist"),
+                DB::raw("ROUND (6371 *
+                acos(
+                    cos(radians(" . $this->lat . "))
+                 * cos(radians(lat))
+                 *cos(radians(lng) - radians(" . $this->lng . "))
+                 + sin(radians(" . $this->lat . "))
+                 * sin(radians(lat)))
+                    , 2) as dist"),
                 )->where('id', '<>', $this->id)
                 ->orderBy('dist', 'asc')
                 ->limit(4)
                 ->whereHas('tags', function ($query) use ($tag) {
                     return $query->where('id', '=', $tag->id);
                 })
-                ->get();
+                ->get());
         }
-        return $nearest ;
+        return $nearest;
     }
 
     public function tags() 

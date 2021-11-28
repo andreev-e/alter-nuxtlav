@@ -35,7 +35,6 @@ class PoiResource extends JsonResource
                 'author' => $this->author,
                 'type' => $this->type,
                 'views' => $this->views,
-                'dist' => $this->dist,
             ];
             if ($single) {
                 $result['nearesttags'] = $this->nearesttags;

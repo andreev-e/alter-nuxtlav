@@ -341,7 +341,6 @@ export default {
           optimizeWaypoints: true,
           travelMode: google.maps.DirectionsTravelMode.DRIVING
       };
-      console.log(request);
 
       if (directions === null) {
         directions = new google.maps.DirectionsService();
@@ -374,11 +373,13 @@ export default {
     dragStart (location) {
       this.localStorage.startLocation.lat = location.latLng.lat();
       this.localStorage.startLocation.lng = location.latLng.lng();
+      // this.localStorage.startLocation = google.maps.LatLng(location.latLng.lat(), location.latLng.lng());
       this.calcRoute();
     },
     dragFinish (location) {
       this.localStorage.finishLocation.lat = location.latLng.lat();
       this.localStorage.finishLocation.lng = location.latLng.lng();
+      // this.localStorage.finishLocation = google.maps.LatLng(location.latLng.lat(), location.latLng.lng());
       this.calcRoute();
     },
     filterTypes () {
@@ -389,24 +390,12 @@ export default {
     },
     recountAdditional () {
       console.log('recountAdditional');
-      let prevpoint = this.startLocation;
-      let prevpoint2 = this.startLocation;
-      if (this.route) {
-        this.route.legs.forEach(leg => {
-          leg.steps.forEach(step => {
-            step.path.forEach(point => {
-              let lat1 = point.lat();
-              let lng1 = point.lng();
-              if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint2, point) > this.otdalenie * 100) {
-                prevpoint2 = point;
-              }
-              if (google.maps.geometry.spherical.computeDistanceBetween(prevpoint, point) > this.otdalenie * 750) {
-                this.additional.push(lat1.toFixed(4)+';'+lng1.toFixed(4));
-                prevpoint = point;
-              }
-            });
-          });
-        });
+      this.additional = [];
+      let prevpoint =  new google.maps.LatLng(this.localStorage.startLocation);
+      // console.log(this.route.overview_polyline);
+      for (let index = 0; index < this.route.overview_path.length; index= index + 10) {
+        const element = this.route.overview_path[index];
+        this.additional.push(this.route.overview_path[index].lat() + ';' + this.route.overview_path[index].lng());
       }
       this.mappois = [];
       this.fetchPoisToMap();
