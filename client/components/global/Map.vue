@@ -12,7 +12,7 @@
       <hr v-if="mode === 'chosen'">
       <b-row v-if="mode === 'chosen'">
         <b-col sm="6">
-          <label for="otdalenie">Отклонение от маршрута, {{ otdalenie }} км:</label>
+          <label for="otdalenie">Отклонение от маршрута, км: {{ otdalenie }}</label>
         </b-col>
         <b-col sm="5">
           <b-input 
@@ -296,7 +296,6 @@ export default {
           }
         }
       } else  {
-        console.log('cancel load pois')
         return;
       }
     },
@@ -334,7 +333,6 @@ export default {
       window.open(url);
     },
     async calcRoute() {
-      console.log('calcRoute');
       this.loading = true;
       const start = { location: this.localStorage.startLocation };
       const end = { location: this.localStorage.finishLocation };
@@ -405,7 +403,6 @@ export default {
       this.fetchPoisToMap();
     },
     mapMoved () {
-      console.log('mapMoved')
       if (this.mode !== 'chosen') { 
         this.fetchPoisToMap();
       }

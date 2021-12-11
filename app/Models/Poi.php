@@ -19,7 +19,8 @@ class Poi extends Model
         'name',
         'type',
         'copyright',
-        'addon'
+        'addon',
+        'links'
     ];
     
     protected $hidden = [

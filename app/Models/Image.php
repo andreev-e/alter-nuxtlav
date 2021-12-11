@@ -15,5 +15,11 @@ class Image extends Model
         'author',
         'is_main',
         'description',
+        'order',
     ];
+
+    public function poi() 
+    {
+        return $this->belongsTo(Poi::class, 'parent');
+    }
 }

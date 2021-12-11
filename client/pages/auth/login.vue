@@ -2,7 +2,7 @@
   <div class="container page">
     <div class="row">
       <div class="col-lg-8 m-auto">
-        <card title="Вход">
+        <b-card title="Вход">
           <p>Внимание! Из-за смены системы хранения паролей старые пароли были сброшены.</p>
           <p>Вы можете <router-link :to="{ name: 'password.request' }">восстановить</router-link> пароль через  почту</p>
           <form @submit.prevent="login" @keydown="form.onKeydown($event)">
@@ -41,16 +41,16 @@
             <div class="form-group row">
               <div class="col-md-7 offset-md-3 d-flex">
                 <!-- Submit Button -->
-                <v-button :loading="form.busy">
+                <b-button :loading="form.busy" @click="login">
                   Войти
-                </v-button>
+                </b-button>
 
                 <!-- GitHub Login Button -->
                 <login-with-github />
               </div>
             </div>
           </form>
-        </card>
+        </b-card>
       </div>
     </div>
   </div>
@@ -76,6 +76,7 @@ export default {
 
   methods: {
     async login () {
+      this.form.busy = true;
       let data
 
       // Submit the form.

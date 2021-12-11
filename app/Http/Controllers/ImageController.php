@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use App\Models\Poi;
 
 class ImageController extends Controller
 {
@@ -35,29 +36,18 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Image  $image
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Image $image)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Image  $image
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Image $image)
-    {
-        //
+        $poi = Poi::findOrFail($request->input('id'));
+        if (auth()->user()->olduser->username === $poi->author) {
+            $path = '';
+            $path = $request->file('file')->store('poi_images', ['disk' => 'public']);
+            $img = Image::create([
+                'path' => $path, 
+                'parent' => $poi->id, 
+                'author' => auth()->user()->id,
+            ]);
+            return response()->json($poi->images);
+        }
+        return;
     }
 
     /**
@@ -80,6 +70,9 @@ class ImageController extends Controller
      */
     public function destroy(Image $image)
     {
-        //
+        if (auth()->user()->olduser->username === $image->poi()->first()->author) {
+            $image->delete();
+            return response()->json($image->poi()->first()->images);
+        }
     }
 }

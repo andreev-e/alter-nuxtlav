@@ -40,15 +40,32 @@
                   <img :src="'https://altertravel.ru/images/' + $route.params.id + '/1.jpg'" :title="poi.name" class="img-fluid">
                 </div>
                 <div id="thumbs">
-                  <div v-for="i in poi.images" :key="`img_${i.id}`" class="gal-img">
-                    <img :src="'https://altertravel.ru/images/' + i.path" :alt="poi.name" class="img-fluid">
-                  </div>
+                  <b-row >
+                    <b-col v-for="i in poi.images" :key="`img_${i.id}`" sm="6">
+                      <b-img 
+                        :src="'http://localhost:8000/storage/' + i.path" 
+                        :alt="poi.name + ' ' + i.id"
+                        thumbnail 
+                        fluid
+                      />
+                      <b-button v-if="edit" @click="deleteImage(i.id)">х</b-button>
+                    </b-col>
+                  </b-row>
                 </div>
+                <hr>
+                <b-form-file 
+                  v-if="edit"
+                  ref="fileupload"
+                  :disabled="imagesLoading"
+                  accept="image/jpeg"
+                  placeholder="Загрузка фото"
+                  @change="filesChange"
+                />
                 <b-form-input v-if="edit" v-model="poi.copyright" placeholder="Автор фотографий" />
-                <p v-else>Автор фотографий {{ poi.copyright ? poi.copyright : poi.author }}  <b-skeleton v-if="loading" width="5%" /> ©</p>
+                <p v-else>Автор фотографий: {{ poi.copyright ? poi.copyright : poi.author }}  <b-skeleton v-if="loading" width="5%" /> ©</p>
               </div>
             </b-tab>
-            <b-tab title="Где находится?">
+            <b-tab v-if="!loading" title="Где находится?">
               <span v-if="edit">Вы можете двигать точку на карте</span>
               <client-only>
                 <GmapMap
@@ -56,6 +73,7 @@
                   :center="center"
                   :zoom="7"
                   map-type-id="terrain"
+                  style="width:100%; height: 400px;"
                 >
                   <GmapMarker
                     :position="center"
@@ -70,7 +88,8 @@
               </h2>
             </b-tab>
             <b-tab v-if="poi.ytb" title="Видео">
-              <iframe width="700" height="400" :src="'https://www.youtube.com/embed/' + poi.ytb" frameborder="0" allowfullscreen="" />
+              <b-form-input v-if="edit" v-model="poi.ytb" placeholder="Например iVX_EDHNvVo" />
+              <iframe v-else width="700" height="400" :src="'https://www.youtube.com/embed/' + poi.ytb" frameborder="0" allowfullscreen="" />
             </b-tab>
           </b-tabs>
         </div>
@@ -173,7 +192,7 @@
       </div>
     </div>
     <b-row>
-      <b-col cols="12">
+      <b-col cols="6">
         <h2 id="addon">
           Примечание
         </h2>
@@ -181,6 +200,16 @@
         <b-form-textarea v-if="edit" v-model="poi.addon" min-rows="3" max-rows="20" no-auto-shrink />
         <span v-else>
           {{ poi.addon }}
+        </span>
+      </b-col>
+      <b-col cols="6">
+        <h2 id="links">
+          Ссылки
+        </h2>
+        <Skeleton v-if="loading && !edit" />
+        <b-form-textarea v-if="edit" v-model="poi.links" min-rows="3" max-rows="20" no-auto-shrink />
+        <span v-else>
+          {{ poi.links }}
         </span>
       </b-col>
     </b-row>
@@ -218,6 +247,7 @@ export default {
       edit: false,
       alltags: [],
       loadingTags: false,
+      imagesLoading: false,
     }
   },
   head () {
@@ -291,7 +321,30 @@ export default {
     dragend(location) {
       this.poi.lat = location.latLng.lat();
       this.poi.lng = location.latLng.lng();
-    }
+    },
+    async filesChange(event) {
+      this.imagesLoading = true;
+      const formData = new FormData();
+      formData.append('file', event.target.files[0]);
+      formData.append('id', this.poi.id);
+      const headers = { 'Content-Type': 'multipart/form-data' };
+      await axios.post('/images', formData, { headers }).then((res) => {
+        if (res.status === 200) {
+          this.poi.images = res.data;
+        }
+      });
+      this.$refs.fileupload.value = null;
+      this.imagesLoading = false;
+    },
+    async deleteImage(id) {
+      this.imagesLoading = true;
+      await axios.delete('/images/' + id).then((res) => {
+        if (res.status === 200) {
+          this.poi.images = res.data;
+        }
+      });
+      this.imagesLoading = false;
+    } 
   }
 }
 </script>

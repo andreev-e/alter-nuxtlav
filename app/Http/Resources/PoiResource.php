@@ -16,12 +16,8 @@ class PoiResource extends JsonResource
      */
     public function toArray($request)
     {
-        $single = false;
-        if ($request->all() === []) {
-            $single = true;
-        }
         $cacheKey = 'poi_' . $this->id;
-        if (Cache::has($cacheKey)) {
+        if (Cache::has($cacheKey) && 0) {
             $result = Cache::get($cacheKey);
             $result['cached'] = true;
         } else {
@@ -36,24 +32,23 @@ class PoiResource extends JsonResource
                 'type' => $this->type,
                 'views' => $this->views,
             ];
-            if ($single) {
-                $result['nearesttags'] = $this->nearesttags;
-                $result['nearesttype'] = $this->nearesttype;
-                $result['nearest'] = $this->nearest;
-                $result['images'] = $this->images;
-                $result['locations'] = array_merge(
-                    $this->locations->toArray(),
-                    [['id' => $this->id, 'name' => $this->name, 'url' => null]] // adding last breadcrumb without link
-                );
-                $result['description'] = $this->description;
-                $result['route'] = $this->route;
-                $result['route_o'] = $this->route_o;
-                $result['comments'] = $this->comments;
-                $result['tags'] = $this->tags->pluck('id');
-                $result['addon'] = $this->addon;
-                $result['copyright'] = $this->copyright;
-                Cache::put($cacheKey, $result, 3600);
-            }
+            $result['nearesttags'] = $this->nearesttags;
+            $result['nearesttype'] = $this->nearesttype;
+            $result['nearest'] = $this->nearest;
+            $result['images'] = $this->images;
+            $result['locations'] = array_merge(
+                $this->locations->toArray(),
+                [['id' => $this->id, 'name' => $this->name, 'url' => null]] // adding last breadcrumb without link
+            );
+            $result['description'] = $this->description;
+            $result['route'] = $this->route;
+            $result['route_o'] = $this->route_o;
+            $result['comments'] = $this->comments;
+            $result['tags'] = $this->tags->pluck('id');
+            $result['addon'] = $this->addon;
+            $result['copyright'] = $this->copyright;
+            $result['links'] = $this->links;
+            Cache::put($cacheKey, $result, 3600);
         }
         return $result;
     }

@@ -54,6 +54,7 @@ Route::apiResource('/pois', 'App\Http\Controllers\PoiController');
 Route::apiResource('/routes', 'App\Http\Controllers\RouteController');
 Route::apiResource('/tags', 'App\Http\Controllers\TagController');
 Route::apiResource('/comments', 'App\Http\Controllers\CommentController');
+Route::apiResource('/images', 'App\Http\Controllers\ImageController');
 
 Route::get('/tags-menu', 'App\Http\Controllers\TagController@tagsMenu');
 
