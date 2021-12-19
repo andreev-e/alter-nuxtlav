@@ -17,7 +17,7 @@ class PoiResource extends JsonResource
     public function toArray($request)
     {
         $cacheKey = 'poi_' . $this->id;
-        if (Cache::has($cacheKey) && 0) {
+        if (Cache::has($cacheKey)) {
             $result = Cache::get($cacheKey);
             $result['cached'] = true;
         } else {

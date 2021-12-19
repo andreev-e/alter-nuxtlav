@@ -59,7 +59,7 @@ export default {
   methods: {
     async fetchPois () {
       this.loadingPois = true;
-      if (this.localStorage.chosen.length) {
+      if (process.client && this.localStorage.chosen.length) {
         const { data } = await axios.get(
           '/pois',
           { 

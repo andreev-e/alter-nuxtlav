@@ -12,13 +12,15 @@
       </div>
       <div class="poi__card__text">
         <nuxt-link :to="'/poi/' + poi.id" class="namelink">
-          <b-icon 
-            :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
-            aria-hidden="true" 
-            variant="warning" 
-            @click.prevent="toggleChosen(poi.id)"
-            class="chosen"
-          />
+          <client-only>
+            <b-icon 
+              :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
+              aria-hidden="true" 
+              variant="warning" 
+              @click.prevent="toggleChosen(poi.id)"
+              class="chosen"
+            />
+          </client-only>
           <span v-html="poi.name" />
         </nuxt-link>
         <div v-if="poi.dist" class="above_img">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Models\Poi;
+use Storage;
 
 class ImageController extends Controller
 {
@@ -39,7 +40,9 @@ class ImageController extends Controller
         $poi = Poi::findOrFail($request->input('id'));
         if (auth()->user()->olduser->username === $poi->author) {
             $path = '';
-            $path = $request->file('file')->store('poi_images', ['disk' => 'public']);
+            // $path = $request->file('file')->store('poi_images', ['disk' => 'public']);
+            $path = $request->file('file')->store('poi_images', 's3');
+            // Storage::disk('s3')->setVisibility($path, 'public');
             $img = Image::create([
                 'path' => $path, 
                 'parent' => $poi->id, 
@@ -48,6 +51,11 @@ class ImageController extends Controller
             return response()->json($poi->images);
         }
         return;
+    }
+
+    public function show(Image $image) 
+    {
+        return Storage::disk('s3')->response('poi_images' . $image->path);
     }
 
     /**
@@ -75,4 +83,5 @@ class ImageController extends Controller
             return response()->json($image->poi()->first()->images);
         }
     }
+
 }

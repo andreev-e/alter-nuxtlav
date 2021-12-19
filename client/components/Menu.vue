@@ -43,7 +43,9 @@
       <li>
         <router-link :to="{ name: 'izbrannoe' }">
           <b-icon icon="star-fill" aria-hidden="true" variant="warning" />
-            Избранное {{ localStorage.chosen.length ? `(${localStorage.chosen.length})` : '' }}
+            <client-only>
+              Избранное {{ localStorage.chosen.length ? `(${localStorage.chosen.length})` : '' }}
+            </client-only>
           <span>Строим маршрут с точками</span>
         </router-link>
       </li>
