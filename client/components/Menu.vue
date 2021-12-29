@@ -85,50 +85,23 @@ export default {
       user: 'auth/user'
     }),
   },
-  async fetch () {
-    if (process.client) {
-      let tags = []
-      if (localStorage.tags) {
-        try {
-          tags = JSON.parse(localStorage.tags)
-        } catch (e) {
-          // console.log(localStorage.tags)
-        }
-      }
-      if (tags.length > 0) {
-        this.tags = tags
-      } else {
-        const { data } = await axios.get('/tags-menu')
-        this.tags = data.data
-        localStorage.tags = this.tags
-      }
-      let regions = []
-      if (localStorage.regions) {
-        try {
-          regions = JSON.parse(localStorage.regions)
-        } catch (e) {
-          // console.log(localStorage.regions)
-        }
-      }
-      if (regions.length > 0) {
-        this.regions = regions
-      } else {
-        let { data } = await axios.get('/countries')
-        this.regions = data.data
-        localStorage.regions = this.regions
-      }
-    } else {
-      let { data } = await axios.get('/tags')
-      this.tags = data.data
-      let { countries } = await axios.get('/countries')
-      this.regions = countries.data
-    }
+  created () {
+    this.fetchTags()
+    this.fetchCountries()
   },
-  mounted () {
-
+  async fetch () {
+    this.fetchTags()
+    this.fetchCountries()
   },
   methods: {
-
+    async fetchCountries () {
+      let { data } = await axios.get('/countries')
+      this.regions = data.data
+    },
+    async fetchTags () {
+      let { data } = await axios.get('/tags')
+      this.tags = data.data
+    },
   }
 }
 </script>

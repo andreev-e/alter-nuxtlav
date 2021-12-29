@@ -20,7 +20,7 @@ class TagController extends Controller
         if ($all) {
             return response()->json(Tag::select('id as value', 'name as text')->where('type', 0)->get());
         }
-        return 0;
+        return self::tagsMenu();
     }
 
     public function tagsMenu() {
