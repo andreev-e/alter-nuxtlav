@@ -14,7 +14,7 @@
         <nuxt-link :to="'/poi/' + poi.id" class="namelink">
           <client-only>
             <b-icon 
-              :icon="localStorage.chosen.indexOf(poi.id) > -1 ? 'star-fill' : 'star'" 
+              :icon="getIcon(poi.id)" 
               aria-hidden="true" 
               variant="warning" 
               @click.prevent="toggleChosen(poi.id)"
@@ -74,6 +74,13 @@ export default {
         }
       } else {
         this.localStorage.chosen.push(id);
+      }
+    },
+    getIcon(id) {
+      if(process.client) {
+        return localStorage.chosen.indexOf(id) > -1 ? 'star-fill' : 'star';
+      } else {
+        return 'star';
       }
     }
   }

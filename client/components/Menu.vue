@@ -43,9 +43,7 @@
       <li>
         <router-link :to="{ name: 'izbrannoe' }">
           <b-icon icon="star-fill" aria-hidden="true" variant="warning" />
-            <client-only>
-              Избранное {{ localStorage.chosen.length ? `(${localStorage.chosen.length})` : '' }}
-            </client-only>
+            Избранное {{ countchosen }}
           <span>Строим маршрут с точками</span>
         </router-link>
       </li>
@@ -72,10 +70,21 @@ export default {
       regions: []
     }
   },
-  computed: mapGetters({
-    authenticated: 'auth/check',
-    user: 'auth/user'
-  }),
+  computed: {
+    countchosen: {
+      get: function () {
+        if(process.client) {
+          return localStorage.chosen ? localStorage.chosen.length : 0;
+        } else {
+          return '';
+        }
+      }
+    },
+    ...mapGetters({
+      authenticated: 'auth/check',
+      user: 'auth/user'
+    }),
+  },
   async fetch () {
     if (process.client) {
       let tags = []
