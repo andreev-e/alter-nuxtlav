@@ -3,7 +3,7 @@ const { join } = require('path')
 const { copySync, removeSync } = require('fs-extra')
 
 module.exports = {
-  ssr: false,
+  ssr: true,
 
   srcDir: __dirname,
 
