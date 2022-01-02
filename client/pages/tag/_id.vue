@@ -1,11 +1,12 @@
 <template>
   <div class="container page">
     <Header />
-    <Breadcrumbs :list="[{name: $route.params.id, url: '' }]" :loading="loadingTag" />
+    <Breadcrumbs :crumbs="[{name: tag.name, url: '' }]" :loading="loadingTag" />
     <div class="row">
       <div class="col-sm-12">
         <h1>
-          {{ $route.params.id }}
+          {{ tag.NAME_ROD ? tag.NAME_ROD + '. Достопримечательности на карте' : tag.name }}
+          <b-skeleton v-if="!tag.name" width="50%" />
         </h1>
       </div>
     </div>
@@ -27,30 +28,41 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
-      loadingTag: true,
+      loadingTag: false,
       pois: [],
       loadingPois: true,
-      center: {},
+      center: { lat: null, lng: null },
       page: 1,
       pages: null,
-      perPage: 12
+      perPage: 12,
+      tag: {
+        name: null,
+        NAME_ROD: null,
+        count: null,
+      },
     }
   },
   async fetch () {
     this.id = this.$route.params.id
     await this.fetchPois()
+    await this.fetchTag()
   },
-  head: {
-    title: 'Карта достопримечательностей для самостоятельных путешественников',
-    meta: [
-      {
-        name: 'description',
-        content: 'Каталог достопримечательностей на карте . Для самостоятельной организации путешествия!'
-      }
-    ]
+  head() {
+    return {
+      title: 'Все ' + this.tag.NAME_ROD + ' на карте. Топ ' + this.tag.count + ' достопримечательность',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Все ' + this.tag.NAME_ROD + ' в путеводителе с фото, описаниями, отзывами, картами проезда. Достопримечательности.'
+        }
+      ]
+    }
   },
   watch: {
     page: {
@@ -73,16 +85,24 @@ export default {
         }
       )
     }
+    this.fetchTag()
   },
   methods: {
+    async fetchTag () {
+      console.log('fetchTag')
+      const { data } = await axios.get('/tags/' + this.id)
+      this.tag = data.tag
+      this.$refs.map.fetchPoisToMap();
+      this.loadingTag = false
+    },
     async fetchPois () {
       this.loadingPois = true
-      const { data, meta } = await this.$axios.$get(
-        '/laravel/pois',
+      const { data } = await axios.get(
+        '/pois',
         { params: { tag: this.id, page: this.page, perPage: this.perPage } }
       )
-      this.pois = data
-      this.pages = meta.total
+      this.pois = data.data
+      this.pages = data.meta.total
       this.loadingPois = false
     }
   }

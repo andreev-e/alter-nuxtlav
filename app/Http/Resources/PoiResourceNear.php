@@ -33,6 +33,7 @@ class PoiResourceNear extends JsonResource
                 'views' => $this->views,
                 'dist' => $this->dist,
             ];
+            Cache::put($cacheKey, $result, 3600);
         }
         return $result;
     }

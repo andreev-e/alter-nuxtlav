@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CommentResource extends JsonResource
 {
@@ -15,12 +15,20 @@ class CommentResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'commentid' => $this->commentid,
-            'name' => $this->name,
-            'comment' => $this->comment,
-            'time' => date('Y-m-d H:i:s', $this->time),
-            'object' => $this->object,
-        ];
+        $cacheKey = 'comment_' . $this->id;
+        if (Cache::has($cacheKey)) {
+            $result = Cache::get($cacheKey);
+            $result['cached'] = true;
+        } else {
+            return [
+                'commentid' => $this->commentid,
+                'name' => $this->name,
+                'comment' => $this->comment,
+                'time' => date('Y-m-d H:i:s', $this->time),
+                'object' => $this->object,
+            ];
+            Cache::put($cacheKey, $result, 3600);
+        }
+        return $result;
     }
 }

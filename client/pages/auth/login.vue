@@ -41,7 +41,7 @@
             <div class="form-group row">
               <div class="col-md-7 offset-md-3 d-flex">
                 <!-- Submit Button -->
-                <b-button :loading="form.busy" @click="login">
+                <b-button @click="login" :disabled="form.busy">
                   Войти
                 </b-button>
 

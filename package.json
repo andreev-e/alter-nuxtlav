@@ -38,7 +38,7 @@
     "eslint-plugin-vue": "^7.0.0-alpha.0",
     "fs-extra": "^9.0.1",
     "prettier": "^2.0.4",
-    "sass": "~1.32.12",
+    "sass": "~1.32.6",
     "sass-loader": "^10.1.0"
   },
   "config": {
@@ -46,5 +46,8 @@
       "host": "localhost",
       "port": "3000"
     }
+  },
+  "resolutions": {
+    "@nuxtjs/vuetify/**/sass": "1.32.6"
   }
 }

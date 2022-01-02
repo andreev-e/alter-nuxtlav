@@ -252,7 +252,7 @@ export default {
       if (this.$refs.map && this.$refs.map.$mapObject) {
         const bounds = this.$refs.map.$mapObject.getBounds()
         if (!bounds) {
-          console.log('nobounds');
+          console.log('no bounds');
           return;
         }
         this.bounds = bounds.toUrlValue();
@@ -330,7 +330,8 @@ export default {
       }
     },
     open(url) {
-      window.open(url);
+      this.$router.push(url);
+      // window.open(url);
     },
     async calcRoute() {
       this.loading = true;

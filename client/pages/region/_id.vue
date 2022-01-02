@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12">
         <h1 class="view">
-          {{ tag.name }}
+          {{ tag.NAME_DAT_ED ? 'Достопримечательности ' + tag.NAME_DAT_ED + ' на карте' : tag.name }}
           <b-skeleton v-if="!tag.name" width="50%" />
         </h1>
       </div>
@@ -80,7 +80,7 @@ export default {
       this.tag = data.tag;
       this.center.lat = this.tag.lat;
       this.center.lng = this.tag.lng;
-      // this.$refs.map.fetchPoisToMap();
+      this.$refs.map.fetchPoisToMap();
       this.loadingRegion = false
     },
     async fetchPois () {

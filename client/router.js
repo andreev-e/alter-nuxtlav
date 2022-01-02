@@ -12,6 +12,7 @@ const routes = [
   { path: '/routes', name: 'routes', component: page('Routes') },
   { path: '/routes/:id', name: 'route', component: page('routes/_id.vue') },
   { path: '/region/:id', name: 'region', component: page('region/_id.vue') },
+  { path: '/tag/:id', name: 'tag', component: page('tag/_id.vue') },
   { path: '/secure', name: 'secure', component: page('secure') },
   { path: '/izbrannoe', name: 'izbrannoe', component: page('Izbrannoe') },
 

@@ -67,16 +67,16 @@ export default {
   data () {
     return {
       tags: [],
-      regions: []
+      regions: [],
     }
   },
   computed: {
     countchosen: {
       get: function () {
         if(process.client) {
-          return localStorage.chosen ? localStorage.chosen.length : 0;
+          return this.localStorage.chosen ? this.localStorage.chosen.length : 0;
         } else {
-          return '';
+          return 0;
         }
       }
     },
