@@ -7,8 +7,7 @@ Vue.use(Router)
 const page = path => () => import(`~/pages/${path}`).then(m => m.default || m)
 
 const routes = [
-  { path: '', name: 'index', component: page('Index') },
-  { path: '/', name: 'main', component: page('Index') },
+  { path: '/', name: 'main', component: page('Main') },
   { path: '/poi/:id', name: 'poi', component: page('poi/_id.vue') },
   { path: '/routes', name: 'routes', component: page('Routes') },
   { path: '/routes/:id', name: 'route', component: page('routes/_id.vue') },

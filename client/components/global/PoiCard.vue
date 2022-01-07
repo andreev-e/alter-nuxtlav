@@ -82,7 +82,7 @@ export default {
       }
     },
     getIcon(id) {
-      if(process.client) {
+      if(process.client && id) {
         return localStorage.chosen.indexOf(id) > -1 ? 'star-fill' : 'star';
       } else {
         return 'star';
