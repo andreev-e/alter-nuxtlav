@@ -5,7 +5,12 @@
         <b-spinner />
       </div>
         <nuxt-link :to="'/poi/' + poi.id">
-          <img :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.id + '.jpg'" :title="poi.name" class="img-fluid">
+          <b-img-lazy
+            :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.main_image"
+            :alt="poi.name"
+            :blank-color="poi.dominatecolor"
+            fluid
+          />
         </nuxt-link>
       <div v-if="user && poi.author === user.login" class="your">
         опубликовали вы
@@ -92,8 +97,8 @@ export default {
     opacity: 0.4;
   }
   .spinner {
-    width:100%;
-    height: 100%;
+    width:90%;
+    height: 90%;
     display: flex;
     position: absolute;
     align-items: center;

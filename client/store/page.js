@@ -1,15 +1,15 @@
 const state = () => {
-  // breadcrumbs: [],
+  countries: []
 }
 
 const mutations = {
-  // setBreadcrumbs(state, breadcrumbs) {
-  //   state.breadcrumbs = breadcrumbs
-  // }
+  setCountrues(state, countries) {
+    state.countries = countries
+  }
 }
 
 const getters = {
-  // getBreadcrumbs: (state) => state.breadcrumbs,
+  getCountrues: (state) => state.countries,
 }
 
 export default {

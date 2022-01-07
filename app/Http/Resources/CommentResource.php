@@ -24,7 +24,8 @@ class CommentResource extends JsonResource
                 'commentid' => $this->commentid,
                 'name' => $this->name,
                 'comment' => $this->comment,
-                'time' => date('Y-m-d H:i:s', $this->time),
+                'date' => date('Y.m.d', $this->time),
+                'time' => date('H:i:s', $this->time),
                 'object' => $this->object,
             ];
             Cache::put($cacheKey, $result, 3600);

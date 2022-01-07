@@ -13,7 +13,7 @@
           >
             <nuxt-link :to="region.url">
               <img v-if="region.flag" width="16" height="16" :src="`https://altertravel.ru/i/flags/` + region.flag" alt="flag">
-              {{ region.name }} ({{ region.count }})
+              {{ region.name }}
             </nuxt-link>
           </li>
         </ul>
@@ -97,10 +97,12 @@ export default {
     async fetchCountries () {
       let { data } = await axios.get('/countries')
       this.regions = data.data
+      this.$store.state.countries = { ...this.regions }
     },
     async fetchTags () {
       let { data } = await axios.get('/tags')
       this.tags = data.data
+      this.$store.state.tags = { ...this.tags }
     },
   }
 }

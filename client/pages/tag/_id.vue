@@ -1,12 +1,15 @@
 <template>
   <div class="container page">
     <Header />
-    <Breadcrumbs :crumbs="[{name: tag.name, url: '' }]" :loading="loadingTag" />
+    <Breadcrumbs 
+      :crumbs="[{name: 'Каталог', url: '/catalog' }, {name: tag.name, url: '' }]"
+      :loading="loadingTag" 
+    />
     <div class="row">
       <div class="col-sm-12">
         <h1>
           {{ tag.NAME_ROD ? tag.NAME_ROD + '. Достопримечательности на карте' : tag.name }}
-          <b-skeleton v-if="!tag.name" width="50%" />
+          <b-skeleton v-if="!tag.name" width="75%" />
         </h1>
       </div>
     </div>
@@ -92,14 +95,16 @@ export default {
       console.log('fetchTag')
       const { data } = await axios.get('/tags/' + this.id)
       this.tag = data.tag
-      this.$refs.map.fetchPoisToMap();
+      if (process.client) {
+        this.$refs.map.fetchPoisToMap();
+      }
       this.loadingTag = false
     },
     async fetchPois () {
       this.loadingPois = true
       const { data } = await axios.get(
         '/pois',
-        { params: { tag: this.id, page: this.page, perPage: this.perPage } }
+        { params: { tag: this.id, page: this.page, limit: this.perPage } }
       )
       this.pois = data.data
       this.pages = data.meta.total

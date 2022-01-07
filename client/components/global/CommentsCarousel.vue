@@ -1,29 +1,33 @@
 <template>
-  <div class="row">
+  <div class="row p-0">
     <div class="col-12 text-center m-3"><b-spinner v-if="loading" label="Spinning" /></div>
-    <div class="col-sm-12">
-      <div id="comments_list" class="comments-list">
-        <div v-for="(comment, index) in comments" :key="comment.commentid" class="comment">
-          <div class="author-date">
-            <b>
+    <div class="col-12">
+      <b-carousel
+        controls
+        indicators
+        :interval="10000"
+      >
+        <b-carousel-slide
+          v-for="(comment) in comments"
+          :key="comment.commentid"
+          style="min-height:250px;"
+        >
+          <b-row class="comment">
+            <b-col cols="3">
               <router-link :to="'/user/' + comment.name">
-                {{ comment.name }}
+                <p>{{ comment.name }}</p>
               </router-link>
-            </b>
-            <i>{{ comment.date }} {{ comment.time }}</i>
-            <router-link v-if="!id" :to="'/poi/' + comment.object.id">
-              об объекте
-              <span v-html="comment.object.name" />
-            </router-link>
-          </div>
-          <div class="comment-text-wrapper">
-            <div class="comment-text">
-              <p>{{ comment.comment }}</p>
-            </div>
-          </div>
-          <hr v-if="index != comments.length - 1">
-        </div>
-      </div>
+              <p><i>{{ comment.date }}</i></p>
+              <router-link v-if="!id" :to="'/poi/' + comment.object.id">
+                <p>&laquo;<span v-html="comment.object.name" />&raquo;</p>
+              </router-link>
+            </b-col>
+            <b-col cols="9" class="comment-text">
+             <p>{{ comment.comment }}</p>
+            </b-col>
+          </b-row>
+        </b-carousel-slide>
+      </b-carousel>
       <b-form v-if="id">
         <b-form-group>
           <b-form-textarea
@@ -47,7 +51,7 @@
 import axios from 'axios'
 
 export default {
-  name: 'Comments',
+  name: 'CommentsCarousel',
   props: {
     id: {
       type: [Number, String],
@@ -97,5 +101,11 @@ export default {
 </script>
 
 <style>
-
+  .comment {
+    min-height: 100px;
+  }
+  .comment p{
+    color:#000;
+    text-align: left;
+  }
 </style>

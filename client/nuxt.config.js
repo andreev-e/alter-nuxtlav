@@ -57,7 +57,36 @@ module.exports = {
   ],
 
   bootstrapVue: {
-    icons: true
+    components: [
+      'BRow',
+      'BCol', 
+      'BButton', 
+      'BTab',
+      'BTabs',
+      'BSkeleton',
+      'BForm',
+      'BFormGroup',  
+      'BFormTextarea',
+      'BFormInput',
+      'BFormCheckboxGroup',
+      'BSpinner',
+      'BPagination',
+      'BCarousel',
+      'BCarouselSlide',
+      'BImg',
+      'BImgLazy',
+      'BIcon', 
+      'BIconEye', 
+      'BIconChat', 
+      'BIconStar', 
+      'BIconStarFill',
+      'BIconHouseDoor'
+    ],
+    config: {
+      'Skeleton': {
+        'animation': 'wave'
+      },
+    }
   },
 
   build: {
@@ -78,6 +107,6 @@ module.exports = {
         }
       }
     }
-  }
+  },
   
 }

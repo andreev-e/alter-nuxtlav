@@ -8,7 +8,7 @@
         </h1>
       </div>
     </div>
-    <Breadcrumbs :crumbs="tag.locations" />
+    <Breadcrumbs :crumbs="breadcrumbs" :loading="loadingRegion" />
     <TwoPanels :left="tag.children" :right="[]" />
     <Map ref="map" :center="center" :zoom="tag.zoom" />
     <div class="row">
@@ -42,6 +42,7 @@ export default {
         name: '',
         lat: 0,
         lng: 0,
+        locations: [],
       },
       center: { lat: null, lng: null },
       page: 1,
@@ -50,6 +51,13 @@ export default {
       loadingPois: true,
       loadingRegion: true
     }
+  },
+  computed: {
+    breadcrumbs: {
+      get: function() {
+        return [{name: 'Каталог', url: '/catalog' }, ...this.tag.locations]
+      },
+    },
   },
   async fetch () {
     this.id = this.$route.params.id
@@ -80,14 +88,16 @@ export default {
       this.tag = data.tag;
       this.center.lat = this.tag.lat;
       this.center.lng = this.tag.lng;
-      this.$refs.map.fetchPoisToMap();
+      if (process.client) {
+        this.$refs.map.fetchPoisToMap();
+      }
       this.loadingRegion = false
     },
     async fetchPois () {
       this.loadingPois = true
       const { data } = await axios.get(
         '/pois',
-        { params: { tag: this.id, page: this.page, perPage: this.perPage } }
+        { params: { tag: this.id, page: this.page, limit: this.perPage } }
       )
       this.pois = data.data
       this.pages = data.meta.total

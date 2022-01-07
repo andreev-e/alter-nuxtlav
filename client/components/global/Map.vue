@@ -1,7 +1,7 @@
 <template>
   <div class="row nopadding">
     <div class="legend-title col-sm-12">
-      <b>Легенда карты и фильтры</b>
+      <b>Категории объектов</b>
       <div style="display:flex; align-items:center; justify-content: space-around">
         <b-form-checkbox-group
           v-model="selectedTypes"
@@ -248,7 +248,7 @@ export default {
   },
   methods: {
     async fetchPoisToMap () {
-      console.log('fetchPoisToMap', this.center.lat);
+      // console.log('fetchPoisToMap', this.center.lat);
       if (this.$refs.map && this.$refs.map.$mapObject) {
         const bounds = this.$refs.map.$mapObject.getBounds()
         if (!bounds) {
@@ -276,6 +276,7 @@ export default {
                   alreadyLoaded: this.alreadyLoaded,
                   additional: this.mode === 'chosen' ? this.additional.join('!') : null,
                   otdalenie: this.mode === 'chosen' ? this.otdalenie : null,
+                  limit: 100,
                 },
                 cancelToken: this.source.token
               }

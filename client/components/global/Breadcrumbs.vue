@@ -4,7 +4,7 @@
       <ul>
         <li class="first">
           <router-link to="/">
-            <b-icon icon="house-door"></b-icon>
+            <b-icon-house-door />
           </router-link>
         </li>
         <li

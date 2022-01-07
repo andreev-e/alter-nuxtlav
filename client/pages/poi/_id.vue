@@ -139,9 +139,6 @@
                 </b-col>
               </b-row>
             </b-tab>
-            <b-tab title="Ночлег рядом">
-              <p>Контент</p>
-            </b-tab>
           </b-tabs>
         </div>
       </div>
@@ -169,8 +166,8 @@
         </b-form-select>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-6">
+    <div v-if="poi.route || edit || poi.route_o" class="row">
+      <div v-if="poi.route || edit" class="col-sm-6">
         <h2 id="route">
           Как добраться на машине
         </h2>
@@ -180,7 +177,7 @@
           {{ poi.route }}
         </span>
       </div>
-      <div class="col-sm-6">
+      <div v-if="poi.route_o || edit" class="col-sm-6">
         <h2 id="route_o">
           Как добраться на общественном транспорте
         </h2>
@@ -191,8 +188,8 @@
         </span>
       </div>
     </div>
-    <b-row>
-      <b-col cols="6">
+    <b-row v-if="poi.addon || edit || poi.links">
+      <b-col cols="6" v-if="poi.addon || edit">
         <h2 id="addon">
           Примечание
         </h2>
@@ -202,7 +199,7 @@
           {{ poi.addon }}
         </span>
       </b-col>
-      <b-col cols="6">
+      <b-col v-if="poi.links || edit" cols="6">
         <h2 id="links">
           Ссылки
         </h2>
@@ -213,9 +210,9 @@
         </span>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row v-if="user && poi.author === user.login">
       <b-col cols="12">
-        <b-button-group v-if="user && poi.author === user.login" style="float:right">
+        <b-button-group  style="float:right">
           <b-button v-if="!edit" @click="edit = true">
             Редактировать
           </b-button>

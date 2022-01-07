@@ -7,7 +7,8 @@ Vue.use(Router)
 const page = path => () => import(`~/pages/${path}`).then(m => m.default || m)
 
 const routes = [
-  { path: '/', name: 'index', component: page('Index') },
+  { path: '', name: 'index', component: page('Index') },
+  { path: '/', name: 'main', component: page('Index') },
   { path: '/poi/:id', name: 'poi', component: page('poi/_id.vue') },
   { path: '/routes', name: 'routes', component: page('Routes') },
   { path: '/routes/:id', name: 'route', component: page('routes/_id.vue') },
@@ -15,6 +16,9 @@ const routes = [
   { path: '/tag/:id', name: 'tag', component: page('tag/_id.vue') },
   { path: '/secure', name: 'secure', component: page('secure') },
   { path: '/izbrannoe', name: 'izbrannoe', component: page('Izbrannoe') },
+  { path: '/catalog', name: 'catalog', component: page('Catalog') },
+  { path: '/user', name: 'users', component: page('user/index.vue') },
+  { path: '/user/:id', name: 'user', component: page('user/_id.vue') },
 
   { path: '/login', name: 'login', component: page('auth/login.vue') },
   { path: '/logout', name: 'logout', component: page('auth/login.vue') },

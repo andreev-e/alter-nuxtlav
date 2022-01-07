@@ -25,7 +25,7 @@
       2009-{{ year }} © Альтернативный путеводитель
     </div>
     <div class="second_menu col-sm-4">
-      <nuxt-link to="/users">
+      <nuxt-link to="/user">
         Авторы
       </nuxt-link>
     </div>

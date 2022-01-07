@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Http\Resources\CommentResource;
+use Illuminate\Support\Facades\Cache;
 
 class CommentController extends Controller
 {
@@ -18,14 +19,18 @@ class CommentController extends Controller
         $id = (integer) $request->input('id');
         $type = $request->input('type');
 
-        $comments = Comment::where('approved', '=', 1)->orderBy('time', 'DESC');
-        if ($id && $type === 'poi') {
-            $comments->where('backlink', '=', $id);
+        $cacheKey = 'comments_' . md5(json_encode($request->all()));
+        if (Cache::has($cacheKey)) {
+            $result = Cache::get($cacheKey);
+        } else {
+            $comments = Comment::where('approved', '=', 1)->orderBy('time', 'DESC');
+            if ($id && $type === 'poi') {
+                $comments->where('backlink', '=', $id);
+            }
+            $result = CommentResource::collection($comments->paginate());
+            Cache::put($cacheKey, $result, 3600);
         }
-
-        // dump($comments->get());
-        // return '';
-        return CommentResource::collection($comments->paginate());
+        return $result;
     }
 
     /**

@@ -112,9 +112,21 @@ class Poi extends Model
     {
         return $this->hasMany(Comment::class, 'backlink')->where('approved', '=', 1)->orderBy('time', 'desc');
     }
+
     public function images() 
     {
         return $this->hasMany(Image::class, 'parent');
+    }
+
+    public function getMainImageAttribute() 
+    {
+        $main = $this->images()->where('is_main', 1)->first();
+        if ($main) {
+            return $main->path;
+        } else {
+            return 'empty.jpg';
+        }
+         
     }
 
 }
