@@ -4,9 +4,9 @@ module.exports = {
         name: 'Altertravel',
         port: 3000,
         exec_mode: 'cluster',
-        instances: '1', // Or a number of instances
-        script: './node_modules/nuxt/bin/nuxt.js',
-        args: 'start',
+        instances: 'max', // Or a number of instances
+        script: './node_modules/nuxt/bin/nuxt-start',
+        // args: 'start',
         watch: false,
         // max_memory_restart: '400M'
       }
