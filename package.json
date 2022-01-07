@@ -41,12 +41,6 @@
     "sass": "~1.32.6",
     "sass-loader": "^10.1.0"
   },
-  "config": {
-    "nuxt": {
-      "host": "localhost",
-      "port": "3000"
-    }
-  },
   "resolutions": {
     "@nuxtjs/vuetify/**/sass": "1.32.6"
   }
