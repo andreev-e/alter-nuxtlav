@@ -16,7 +16,7 @@ const routes = [
   { path: '/secure', name: 'secure', component: page('secure') },
   { path: '/izbrannoe', name: 'izbrannoe', component: page('Izbrannoe') },
   { path: '/catalog', name: 'catalog', component: page('Catalog') },
-  { path: '/user', name: 'users', component: page('user/index.vue') },
+  { path: '/user', name: 'users', component: page('user/list.vue') },
   { path: '/user/:id', name: 'user', component: page('user/_id.vue') },
 
   { path: '/login', name: 'login', component: page('auth/login.vue') },

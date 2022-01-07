@@ -12,7 +12,7 @@
             :key="region.id"
           >
             <nuxt-link :to="region.url">
-              <img v-if="region.flag" width="16" height="16" :src="`https://altertravel.ru/i/flags/` + region.flag" alt="flag">
+              <img v-if="region.flag" width="16" height="16" :src="`https://altertravel-photoes.s3.eu-central-1.amazonaws.com/i/flags/${region.flag}`" alt="flag">
               {{ region.name }}
             </nuxt-link>
           </li>
@@ -85,13 +85,9 @@ export default {
       user: 'auth/user'
     }),
   },
-  created () {
-    this.fetchTags()
-    this.fetchCountries()
-  },
   async fetch () {
-    this.fetchTags()
-    this.fetchCountries()
+    await this.fetchTags()
+    await this.fetchCountries()
   },
   methods: {
     async fetchCountries () {

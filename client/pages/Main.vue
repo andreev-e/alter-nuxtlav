@@ -27,7 +27,7 @@
     </div>
     <Gallery :objects="pois_popular" :loading="loadingPoisPopular" />
     <div class="row">
-      <div v-if="countries.length" class="col-sm-4">
+      <div class="col-sm-4">
         <h2>Страны</h2>
         <ul>
           <li
@@ -35,13 +35,13 @@
             :key="region.id"
           >
             <nuxt-link :to="region.url">
-              <img v-if="region.flag" width="16" height="16" :src="`https://altertravel.ru/i/flags/` + region.flag" alt="flag">
+              <img v-if="region.flag" width="16" height="16" :src="`https://altertravel-photoes.s3.eu-central-1.amazonaws.com/i/flags/` + region.flag" alt="flag">
               {{ region.name }} ({{ region.count }})
             </nuxt-link>
           </li>
         </ul>
       </div>
-      <div v-if="tags.length" class="col-sm-4">
+      <div class="col-sm-4">
         <h2>Метки</h2>
         <ul>
           <li
@@ -49,7 +49,6 @@
             :key="region.id"
           >
             <nuxt-link :to="region.url">
-              <img v-if="region.flag" width="16" height="16" :src="`https://altertravel.ru/i/flags/` + region.flag" alt="flag">
               {{ region.name }} ({{ region.count }})
             </nuxt-link>
           </li>
@@ -124,8 +123,6 @@ export default {
         }
       )
     }
-    this.fetchPoisNew()
-    this.fetchPoisPopular()
   },
   methods: {
     async fetchPoisNew () {
