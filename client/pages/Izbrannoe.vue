@@ -2,7 +2,7 @@
   <div class="container page">
     <div class="row">
       <div class="col-sm-12">
-        <h1 class="view">
+        <h1>
           Маршут с избранными точками
         </h1>
       </div>

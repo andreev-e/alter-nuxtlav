@@ -1,7 +1,7 @@
 <template>
   <div class="row gallery">
     <div class="col-12 text-center m-3"><b-spinner v-if="loading && objects.length === 0" /></div>
-    <div v-for="poi in objects" :key="poi.id" class="col-sm-3">
+    <div v-for="poi in objects" :key="poi.id" class="col-xs-12 col-sm-3">
       <PoiCard v-if="type === 'poi'" :poi="poi" :loading="loading" />
       <RouteCard v-if="type === 'route'" :poi="poi" :loading="loading" />
     </div>

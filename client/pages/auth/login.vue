@@ -10,7 +10,14 @@
             <div class="form-group row">
               <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
               <div class="col-md-7">
-                <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" type="email" name="email" class="form-control">
+                <input
+                  v-model="form.email"
+                  :disabled="form.busy"
+                  :class="{ 'is-invalid': form.errors.has('email') }"
+                  type="email"
+                  name="email"
+                  class="form-control"
+                >
                 <has-error :form="form" field="email" />
               </div>
             </div>
@@ -19,7 +26,14 @@
             <div class="form-group row">
               <label class="col-md-3 col-form-label text-md-right">Пароль</label>
               <div class="col-md-7">
-                <input v-model="form.password" :class="{ 'is-invalid': form.errors.has('password') }" type="password" name="password" class="form-control">
+                <input
+                  v-model="form.password"
+                  :disabled="form.busy"
+                  :class="{ 'is-invalid': form.errors.has('password') }"
+                  type="password"
+                  name="password"
+                  class="form-control"
+                >
                 <has-error :form="form" field="password" />
               </div>
             </div>
@@ -42,6 +56,7 @@
               <div class="col-md-7 offset-md-3 d-flex">
                 <!-- Submit Button -->
                 <b-button @click="login" :disabled="form.busy">
+                  <b-spinner v-if="form.busy" small></b-spinner>
                   Войти
                 </b-button>
 

@@ -1,30 +1,34 @@
 <template>
   <div class="row nopadding">
     <div class="legend-title col-sm-12">
-      <b>Категории объектов</b>
-      <div style="display:flex; align-items:center; justify-content: space-around">
+      <b v-b-toggle.collapse style="cursor:pointer">
+        Настройки
+        <b-icon-arrows-expand />
+      </b>
+      <b-collapse id="collapse" style="align-items:center; justify-content: space-around">
         <b-form-checkbox-group
           v-model="selectedTypes"
           :options="typesSelect"
           @change="filterTypes"
         />
-      </div>
-      <hr v-if="mode === 'chosen'">
-      <b-row v-if="mode === 'chosen'">
-        <b-col sm="6">
-          <label for="otdalenie">Отклонение от маршрута, км: {{ otdalenie }}</label>
-        </b-col>
-        <b-col sm="5">
-          <b-input 
-            id="otdalenie" 
-            v-model="otdalenie" 
-            min="5" 
-            max="50" 
-            type="range"
-            @change="recountAdditional"
-          />
-        </b-col>
-      </b-row>
+        <hr v-if="mode === 'chosen'">
+        <b-row v-if="mode === 'chosen'">
+          <b-col sm="6">
+            <label for="otdalenie">Отклонение от маршрута, км: {{ otdalenie }}</label>
+          </b-col>
+          <b-col sm="5">
+            <b-form-input 
+              id="otdalenie" 
+              v-model="otdalenie" 
+              min="5" 
+              max="50" 
+              type="range"
+              @change="recountAdditional"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+
     </div>
     <div class="mapspinner">
       <b-spinner v-if="loading" />

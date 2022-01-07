@@ -2,7 +2,7 @@
   <div class="container page">
     <div class="row">
       <div class="col-sm-12">
-        <h1 class="view">
+        <h1>
           {{ tag.NAME_DAT_ED ? 'Достопримечательности ' + tag.NAME_DAT_ED + ' на карте' : tag.name }}
           <b-skeleton v-if="!tag.name" width="50%" />
         </h1>

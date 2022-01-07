@@ -4,7 +4,7 @@
       <li class="region_select">
         <a href="#">
           Регион
-          <span>выбрать</span>
+          <span class="subtitle d-none d-md-block">выбрать</span>
         </a>
         <ul>
           <li
@@ -21,7 +21,7 @@
       <li class="region_select">
         <a href="#">
           Теги
-          <span>выбрать</span>
+          <span class="subtitle d-none d-md-block">выбрать</span>
         </a>
         <ul>
           <li
@@ -37,20 +37,20 @@
       <li>
         <router-link :to="{ name: 'routes' }">
           Маршруты
-          <span>готовые треки</span>
+          <span class="subtitle d-none d-md-block">готовые треки</span>
         </router-link>
       </li>
       <li>
         <router-link :to="{ name: 'izbrannoe' }">
           <b-icon icon="star-fill" aria-hidden="true" variant="warning" />
-            Избранное {{ countchosen }}
-          <span>Строим маршрут с точками</span>
+          <span class="d-none d-md-inline">Избранное </span>{{ countchosen }}
+          <span class="subtitle d-none d-md-block">Строим маршрут с точками</span>
         </router-link>
       </li>
       <li v-if="authenticated">
         <router-link :to="{ name: 'secure' }">
           {{ user.name }}
-          <span>точки и маршруты</span>
+          <span class="subtitle d-none d-md-block">точки и маршруты</span>
         </router-link>
       </li>
     </ul>
@@ -74,9 +74,9 @@ export default {
     countchosen: {
       get: function () {
         if(process.client) {
-          return this.localStorage.chosen ? this.localStorage.chosen.length : 0;
+          return this.localStorage.chosen ? this.localStorage.chosen.length : '';
         } else {
-          return 0;
+          return '';
         }
       }
     },
@@ -128,7 +128,6 @@ export default {
     background-color: #A2B9C8;
     border-top-left-radius: 9px;
     border-top-right-radius: 9px;
-    height: 46px;
     padding: 4px 4px;
     margin-left: 1px;
   }
@@ -177,13 +176,12 @@ export default {
   .region_select a {
     margin: 0;
     padding: 0;
-    line-height: 17px;
     overflow: hidden;
   }
     ul, li {
     list-style-type: none;
   }
-  .header-menu ul li a span {
+  .header-menu ul li a span.subtitle {
     font-size: 14px;
     display: block;
   }

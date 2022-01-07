@@ -2,7 +2,7 @@
   <div class="container page">
     <div class="row">
       <div class="col-sm-12">
-        <h1 class="view">
+        <h1>
           {{ poi.name }}
         </h1>
       </div>

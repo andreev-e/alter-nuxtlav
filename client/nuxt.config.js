@@ -63,8 +63,11 @@ module.exports = {
       'BButton', 
       'BTab',
       'BTabs',
+      'BCard',
+      'BCollapse',
       'BSkeleton',
       'BForm',
+      'BFormInput',
       'BFormGroup',  
       'BFormTextarea',
       'BFormInput',
@@ -80,7 +83,11 @@ module.exports = {
       'BIconChat', 
       'BIconStar', 
       'BIconStarFill',
-      'BIconHouseDoor'
+      'BIconHouseDoor',
+      'BIconArrowsExpand',
+    ],
+    directives: [
+      'VBToggle'
     ],
     config: {
       'Skeleton': {
