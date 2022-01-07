@@ -6,7 +6,7 @@ module.exports = {
         instances: '1', // Or a number of instances
         script: './node_modules/nuxt/bin/nuxt.js',
         args: 'start',
-        watch: true,
+        watch: false,
         // max_memory_restart: '400M'
       }
     ]
