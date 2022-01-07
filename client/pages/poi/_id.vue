@@ -43,7 +43,7 @@
                   <b-row >
                     <b-col v-for="i in poi.images" :key="`img_${i.id}`" sm="6">
                       <b-img 
-                        :src="'http://localhost:8000/storage/' + i.path" 
+                        :src="'/storage/' + i.path" 
                         :alt="poi.name + ' ' + i.id"
                         thumbnail 
                         fluid
