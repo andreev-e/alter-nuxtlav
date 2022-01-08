@@ -30,4 +30,10 @@ class UserController extends Controller
         }
         return $result;
     }
+
+    public function show($username)
+    {
+        $user = User::rightJoin('users', 'authors.email', '=', 'users.email')->where('users.username', $username)->first();
+        return new UserResource($user); 
+    }
 }

@@ -35,7 +35,7 @@ module.exports = {
 
   css: [
     { src: '~assets/sass/app.scss', lang: 'scss' },
-    '~assets/css/common.css'
+    '~assets/css/common.css',
   ],
 
   plugins: [
@@ -48,6 +48,7 @@ module.exports = {
     '~plugins/vue-reactive-storage',
     { src: '~plugins/bootstrap', mode: 'client' },
     { src: '~/plugins/vue2-google-maps', mode: 'client', ssr: false },
+    { src: '~/plugins/vue-google-adsense', ssr: false }
   ],
 
   modules: [
@@ -96,9 +97,10 @@ module.exports = {
     }
   },
 
+
   build: {
     extractCSS: true,
-    transpile: [/^vue2-google-maps($|\/)/]
+    transpile: [/^vue2-google-maps($|\/)/],
   },
 
   hooks: {

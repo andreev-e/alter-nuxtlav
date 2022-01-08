@@ -6,7 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 
-class PoiResourceNear extends JsonResource
+class PoiResourceLight extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -28,6 +28,8 @@ class PoiResourceNear extends JsonResource
             'views' => $this->views,
             'dist' => $this->dist,
             'main_image' => $this->main_image,
+            'dominatecolor' => $this->dominatecolor,
+            'comments' => $this->comments,
         ];
         return $result;
     }

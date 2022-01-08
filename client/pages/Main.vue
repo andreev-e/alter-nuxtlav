@@ -69,7 +69,7 @@ export default {
       loadingPoisNew: true,
       pois_popular: [],
       loadingPoisPopular: true,
-      center: { lat: null, lng: null },
+      center: { lat: 0, lng: 0 },
       types: [],
       m_names: ['январе', 'феврале', 'марте', 
                'апреле', 'мае', 'июне', 'июле', 

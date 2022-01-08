@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Poi;
 use Illuminate\Http\Request;
-use App\Http\Resources\PoiResource;
+use App\Http\Resources\PoiResourceLight;
+use App\Http\Resources\PoiResourceFull;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,7 @@ class PoiController extends Controller
         $only = $request->input('only');
         $additional = $request->input('additional');
         $otdalenie = $request->input('otdalenie');
+        $author = $request->input('author');
         $sort = $request->input('sort');
         $direction = $request->input('direction');
         $limit = $request->input('limit') ? $request->input('limit') : 10;
@@ -122,15 +124,19 @@ class PoiController extends Controller
             if (Auth::check() && $my) {
                 $pois->where('author', '=', auth()->user()->olduser->username);
             }
+
+            if ($author) {
+                $pois->where('author', '=', $author);
+            }
     
             if ($types) {
                 $pois->whereIn('type', $types);
             }
                         
             if ($page) {
-                $result =  PoiResource::collection($pois->paginate($limit));
+                $result =  PoiResourceLight::collection($pois->paginate($limit));
             } else {
-                $result =  PoiResource::collection($pois->limit($limit)->get()); 
+                $result =  PoiResourceLight::collection($pois->limit($limit)->get()); 
             }
 
             Cache::put($cacheKey, $result, 3600);
@@ -170,7 +176,7 @@ class PoiController extends Controller
      */
     public function show(Poi $poi)
     {
-        return new PoiResource($poi);
+        return new PoiResourceFull($poi);
     }
 
     /**
@@ -189,7 +195,7 @@ class PoiController extends Controller
         if ($tags) {
             $poi->tags()->sync($tags);
         }
-        return new PoiResource($poi);
+        return new PoiResourceFull($poi);
     }
 
     /**

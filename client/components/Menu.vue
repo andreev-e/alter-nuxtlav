@@ -43,13 +43,20 @@
       <li>
         <router-link :to="{ name: 'izbrannoe' }">
           <b-icon icon="star-fill" aria-hidden="true" variant="warning" />
-          <span class="d-none d-md-inline">Избранное </span>{{ countchosen }}
+          <span class="d-none d-md-inline">Избранное </span>
+          {{ countchosen }}
           <span class="subtitle d-none d-md-block">Строим маршрут с точками</span>
         </router-link>
       </li>
       <li v-if="authenticated">
         <router-link :to="{ name: 'secure' }">
-          {{ user.name }}
+          <b-img
+            :src="`https://altertravel.ru/authors/${user.olduser.username}.jpg`"
+            rounded="circle"
+            alt="ava"
+            height="19"
+          />
+          <span class="d-none d-md-inline">{{ user.name }}</span>
           <span class="subtitle d-none d-md-block">точки и маршруты</span>
         </router-link>
       </li>
@@ -135,7 +142,7 @@ export default {
     width: 350px;
     margin: 0;
     margin-top: -1px;
-    margin-left: -7px;
+    margin-left: -5px;
     background: #FFF;
     color: #244255;
     border-bottom-left-radius: 6px;

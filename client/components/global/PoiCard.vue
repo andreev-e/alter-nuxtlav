@@ -9,7 +9,7 @@
             :src="'https://altertravel.ru/thumb.php?f=/images/' + poi.main_image"
             :alt="poi.name"
             :blank-color="poi.dominatecolor"
-            fluid
+            fluid-grow
           />
         </nuxt-link>
       <div v-if="user && poi.author === user.login" class="your">
@@ -22,8 +22,9 @@
               :icon="getIcon(poi.id)" 
               aria-hidden="true" 
               variant="warning" 
-              @click.prevent="toggleChosen(poi.id)"
               class="chosen"
+              title="Добавить в избранное"
+              @click.prevent.stop="toggleChosen(poi.id)"
             />
           </client-only>
           <span v-html="poi.name" />
@@ -39,6 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Swal from 'sweetalert2'
 
 export default {
   name: 'PoiCard',
@@ -52,11 +54,6 @@ export default {
       default: false
     },
   },
-  data() {
-    return {
-      chosen: [],
-    }
-  },
   computed: {
     ...mapGetters({ user: 'auth/user'}),
     views: {
@@ -68,8 +65,6 @@ export default {
       },
     },
   },
-  mounted() {
-  },
   methods: {
     toggleChosen(id) {
       if (this.localStorage.chosen.includes(id)) {
@@ -77,8 +72,20 @@ export default {
         if (index > -1) {
           this.localStorage.chosen.splice(index, 1);
         }
+        Swal.fire({
+          icon: 'success',
+          title: 'Удалено из избранного',
+          showConfirmButton: false,
+          timer: 2000
+        })
       } else {
         this.localStorage.chosen.push(id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Добавлено в избранное',
+          showConfirmButton: false,
+          timer: 2000
+        })
       }
     },
     getIcon(id) {
@@ -97,8 +104,8 @@ export default {
     opacity: 0.4;
   }
   .spinner {
-    width:90%;
-    height: 90%;
+    width:95%;
+    height: 95%;
     display: flex;
     position: absolute;
     align-items: center;
@@ -107,6 +114,7 @@ export default {
   }
   .poi__card {
     box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    margin-bottom:30px;
   }
   .namelink {
     text-decoration: none;

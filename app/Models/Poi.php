@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\PoiResourceNear;
+use App\Http\Resources\PoiResourceLight;
 
 class Poi extends Model
 {
@@ -35,7 +35,7 @@ class Poi extends Model
 
     public function getNearestAttribute() 
     {
-        $nearest = PoiResourceNear::collection(self::select(
+        $nearest = PoiResourceLight::collection(self::select(
             '*',
             DB::raw("ROUND (6371 *
             acos(
@@ -55,7 +55,7 @@ class Poi extends Model
 
     public function getNearesttypeAttribute() 
     {
-        $nearest = PoiResourceNear::collection(self::select(
+        $nearest = PoiResourceLight::collection(self::select(
             '*',
             DB::raw("ROUND (6371 *
             acos(
@@ -79,7 +79,7 @@ class Poi extends Model
         $nearest = [];
         $tags = $this->tags()->get();
         foreach ($tags as $tag) {
-            $nearest[$tag->name] = PoiResourceNear::collection(self::select(
+            $nearest[$tag->name] = PoiResourceLight::collection(self::select(
                 '*',
                 DB::raw("ROUND (6371 *
                 acos(

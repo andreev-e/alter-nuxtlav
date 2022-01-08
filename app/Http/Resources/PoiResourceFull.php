@@ -6,7 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 
-class PoiResource extends JsonResource
+class PoiResourceFull extends JsonResource
 {
     /**
      * Transform the resource collection into an array.

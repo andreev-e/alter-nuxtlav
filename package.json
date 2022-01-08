@@ -24,8 +24,10 @@
     "nuxt": "^2.14.7",
     "sweetalert2": "^10.10.4",
     "vform": "^1.0.1",
+    "vue-google-adsense": "^1.10.1",
     "vue-i18n": "^8.22.2",
     "vue-reactive-storage": "github:ropbla9/vue-reactive-storage",
+    "vue-script2": "^2.1.0",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {

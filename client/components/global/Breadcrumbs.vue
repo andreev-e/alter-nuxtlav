@@ -49,7 +49,7 @@ export default {
   .navigation li {
       list-style-image: url('https://altertravel.ru/i/list_style.png');
       float: left;
-      margin-left: 24px;
+      margin-left: 20px;
       font-size: 17px;
   }
   .navigation a {

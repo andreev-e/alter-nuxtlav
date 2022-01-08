@@ -1,10 +1,5 @@
 <template>
   <div class="container page">
-    <Header />
-    <Breadcrumbs 
-      :crumbs="[{name: 'Каталог', url: '/catalog' }, {name: tag.name, url: '' }]"
-      :loading="loadingTag" 
-    />
     <div class="row">
       <div class="col-sm-12">
         <h1>
@@ -13,6 +8,11 @@
         </h1>
       </div>
     </div>
+    <Breadcrumbs 
+      :crumbs="[{name: 'Каталог', url: '/catalog' }, {name: tag.name, url: '' }]"
+      :loading="loadingTag" 
+    />
+
     <Map :center="center" :tag="$route.params.id" />
     <Gallery :objects="pois" :loading="loadingPois" />
     <div class="row">
@@ -92,7 +92,6 @@ export default {
   },
   methods: {
     async fetchTag () {
-      console.log('fetchTag')
       const { data } = await axios.get('/tags/' + this.id)
       this.tag = data.tag
       if (process.client) {

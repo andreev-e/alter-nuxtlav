@@ -136,7 +136,7 @@ export default {
   props: {
     center: {
       type: Object,
-      default: () => ({ lat: null, lng: null })
+      default: () => ({ lat: 0, lng: 0 })
     },
     tag: {
       type: String,
@@ -252,7 +252,6 @@ export default {
   },
   methods: {
     async fetchPoisToMap () {
-      // console.log('fetchPoisToMap', this.center.lat);
       if (this.$refs.map && this.$refs.map.$mapObject) {
         const bounds = this.$refs.map.$mapObject.getBounds()
         if (!bounds) {
@@ -280,7 +279,7 @@ export default {
                   alreadyLoaded: this.alreadyLoaded,
                   additional: this.mode === 'chosen' ? this.additional.join('!') : null,
                   otdalenie: this.mode === 'chosen' ? this.otdalenie : null,
-                  limit: 100,
+                  limit: 500,
                 },
                 cancelToken: this.source.token
               }
@@ -375,7 +374,7 @@ export default {
       this.total = this.total / 1000;
       this.total = Math.round(this.total * 10) / 10
       if (this.total > 1000) { 
-        this.otdalenie = 50; 
+        this.otdalenie = 5; 
       }
     },
     dragStart (location) {
@@ -399,10 +398,8 @@ export default {
     recountAdditional () {
       console.log('recountAdditional');
       this.additional = [];
-      let prevpoint =  new google.maps.LatLng(this.localStorage.startLocation);
       // console.log(this.route.overview_polyline);
       for (let index = 0; index < this.route.overview_path.length; index= index + 10) {
-        const element = this.route.overview_path[index];
         this.additional.push(this.route.overview_path[index].lat() + ';' + this.route.overview_path[index].lng());
       }
       this.mappois = [];

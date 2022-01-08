@@ -2,11 +2,22 @@
   <div class="container page">
     <div class="row">
       <div class="col-sm-12">
-        <h1 class="view">
+        <h1>
           <b-row>
             <b-col cols="9">
               <b-form-input v-if="edit" v-model="poi.name" />
               <span v-else>
+                <client-only>
+                  <b-icon
+                    v-if="!loading"
+                    :icon="getIcon(poi.id)" 
+                    aria-hidden="true" 
+                    variant="warning" 
+                    class="chosen"
+                    title="Добавить в избранное"
+                    @click="toggleChosen(poi.id)"
+                  />
+                </client-only>
                 <span v-html="poi.name" />
               </span>
               <b-skeleton v-if="loading && !edit" width="90%" />
@@ -30,8 +41,8 @@
       </div>
     </div>
     <Breadcrumbs :crumbs="poi.locations" />
-    <div class="row inner">
-      <div class="col-sm-8 object-full">
+    <b-row class="inner">
+      <b-col col xs="12" sm="12" md="12" lg="8" class="object-full">
         <div>
           <b-tabs>
             <b-tab title="Фото">
@@ -62,7 +73,13 @@
                   @change="filesChange"
                 />
                 <b-form-input v-if="edit" v-model="poi.copyright" placeholder="Автор фотографий" />
-                <p v-else>Автор фотографий: {{ poi.copyright ? poi.copyright : poi.author }}  <b-skeleton v-if="loading" width="5%" /> ©</p>
+                <p v-else>
+                  Автор фотографий:
+                  <nuxt-link :to="`/user/${poi.author}`">
+                    {{ poi.copyright ? poi.copyright : poi.author }}
+                  </nuxt-link>
+                  <b-skeleton v-if="loading" width="5%" /> ©
+                </p>
               </div>
             </b-tab>
             <b-tab v-if="!loading" title="Где находится?">
@@ -93,8 +110,8 @@
             </b-tab>
           </b-tabs>
         </div>
-      </div>
-      <div class="col-sm-4">
+      </b-col>
+      <b-col col xs="12" sm="12" md="12" lg="4">
         <h2 id="interesting">
           Описание
         </h2>
@@ -105,8 +122,8 @@
             {{ poi.description }}
           </span>
         </p>
-      </div>
-    </div>
+      </b-col>
+    </b-row>
     <div v-if="!edit" class="row">
       <div class="col-sm-12">
         <h2 id="near">
@@ -116,7 +133,7 @@
           <b-tabs content-class="mt-3">
             <b-tab title="Ближе всего" active>
               <b-row>
-                <b-col v-for="poi in poi.nearest" :key="poi.id" cols="3">
+                <b-col v-for="poi in poi.nearest" :key="poi.id" col sm="12" md="6" lg="3">
                   <PoiCard :poi="poi" />
                 </b-col>
               </b-row>
@@ -127,14 +144,14 @@
               :title="tag.text"
             >
               <b-row>
-                <b-col v-for="poi in poi.nearesttags[tag.text]" :key="poi.id" cols="3">
+                <b-col v-for="poi in poi.nearesttags[tag.text]" :key="poi.id" col sm="12" md="6" lg="3">
                   <PoiCard :poi="poi" />
                 </b-col>
               </b-row>
             </b-tab>
             <b-tab :title="poi.type ? `«${poi.type}»` : ``">
               <b-row>
-                <b-col v-for="poi in poi.nearesttype" :key="poi.id" cols="3">
+                <b-col v-for="poi in poi.nearesttype" :key="poi.id" col sm="12" md="6" lg="3">
                   <PoiCard :poi="poi" />
                 </b-col>
               </b-row>
@@ -233,6 +250,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import Swal from 'sweetalert2'
 
 export default {
   data () {
@@ -259,24 +277,24 @@ export default {
     }
   },
   computed: {
-      ...mapGetters({
-        authenticated: 'auth/check',
-        user: 'auth/user'
-      }),
-      tags: {
-        get: function() {
-          return this.alltags.filter((item) => this.poi.tags.includes(item.value))
-        }
-      },
-      center: {
-        get: function() {
-          if (this.poi.lat) {
-            return { lat: this.poi.lat, lng: this.poi.lng }
-          } else {
-            return { lat: 0, lng: 0 }
-          }
+    ...mapGetters({
+      authenticated: 'auth/check',
+      user: 'auth/user'
+    }),
+    tags: {
+      get: function() {
+        return this.alltags.filter((item) => this.poi.tags.includes(item.value))
+      }
+    },
+    center: {
+      get: function() {
+        if (this.poi.lat) {
+          return { lat: this.poi.lat, lng: this.poi.lng }
+        } else {
+          return { lat: 0, lng: 0 }
         }
       }
+    },
   },
   created () {
     this.fetchAllTags();
@@ -341,12 +359,44 @@ export default {
         }
       });
       this.imagesLoading = false;
-    } 
+    },
+    getIcon(id) {
+      if(process.client && localStorage.chosen) {
+        return localStorage.chosen.indexOf(id) > -1 ? 'star-fill' : 'star';
+      } else {
+        return 'star';
+      }
+    },
+    toggleChosen(id) {
+      if (this.localStorage.chosen.includes(id)) {
+        const index = this.localStorage.chosen.indexOf(id);
+        if (index > -1) {
+          this.localStorage.chosen.splice(index, 1);
+        }
+        Swal.fire({
+          icon: 'success',
+          title: 'Удалено из избранного',
+          showConfirmButton: false,
+          timer: 2000
+        })
+      } else {
+        this.localStorage.chosen.push(id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Добавлено в избранное',
+          showConfirmButton: false,
+          timer: 2000
+        })
+      }
+    },
   }
 }
 </script>
 
 <style scoped>
+  .chosen {
+    cursor: pointer;
+  }
   .near, .comments_tabz {
     background: #7495AA;
     padding: 5px;
