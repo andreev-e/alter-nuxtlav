@@ -88,7 +88,6 @@ export default {
         }
       )
     }
-    this.fetchTag()
   },
   methods: {
     async fetchTag () {

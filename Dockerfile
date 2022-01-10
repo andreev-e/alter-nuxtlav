@@ -2,6 +2,7 @@ FROM php:7.4-fpm
 
 ARG user
 ARG uid
+ARG workdir=/var/www
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -28,24 +29,20 @@ RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR $workdir
 
 USER $user
 
-
 FROM node:alpine
 
-WORKDIR ${APP_ROOT}
-
-COPY package.json ${APP_ROOT}
-# COPY package-lock.json ${APP_ROOT}
+COPY package.json $workdir
 
 # RUN npm update
 # RUN npm ci
 RUN npm cache clear --force
 RUN npm i --prefer-dedupe
 
-COPY . ${APP_ROOT}
+COPY . $workdir
 
 
 CMD [ "npm","start" ]

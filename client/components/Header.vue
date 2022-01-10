@@ -1,6 +1,6 @@
 <template>
   <div class="header row">
-    <div class="logo col-sm-3">
+    <div class="logo col-xs-12 col-lg-3">
       <nuxt-link :to="'/'">
         <img src="https://altertravel.ru/i/logo.png" alt="Альтернативный путеводитель">
       </nuxt-link>

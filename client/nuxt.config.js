@@ -61,7 +61,8 @@ module.exports = {
     components: [
       'BRow',
       'BCol', 
-      'BButton', 
+      'BButton',
+      'BButtonGroup', 
       'BTab',
       'BTabs',
       'BCard',

@@ -29,6 +29,26 @@
         <p><b>Сайт</b></p>
         <p>{{ user.homepage }}</p>
         <h2>Публикации</h2>
+        <b-button-group>
+          <b-button
+            :variant="sort === 'date' ? 'secondary' : 'outline-secondary'"
+            @click="sort = 'date'"
+          >
+            Новые
+          </b-button>
+          <b-button
+            :variant="sort === 'views' ? 'secondary' : 'outline-secondary'"
+            @click="sort = 'views'"
+          >
+            Популярные
+          </b-button>
+          <b-button
+            :variant="sort === 'comments' ? 'secondary' : 'outline-secondary'"
+            @click="sort = 'comments'"
+          >
+            Комментируемые
+          </b-button>
+        </b-button-group>
         <Gallery :objects="pois" :loading="loadingPois"/>
         <b-pagination
           v-if="total / perPage > 1"
@@ -77,6 +97,11 @@ export default {
       handler () {
         this.fetchPois()
       }
+    },
+    sort: {
+      handler () {
+        this.fetchPois()
+      }
     }
   },
   computed: {
@@ -106,7 +131,6 @@ export default {
             page: this.page, 
             limit: this.perPage, 
             sort: this.sort, 
-            direction: 'asc', 
             author: this.$route.params.id
           } 
         }

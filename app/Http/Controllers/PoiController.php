@@ -82,7 +82,14 @@ class PoiController extends Controller
             }
             
             if ($sort) {
-                $pois->orderBy($sort, $direction ? $direction : 'desc');
+                if ($sort === 'date') {
+                    $pois->orderBy($sort, 'desc');
+                } elseif ($sort === 'views') {
+                    $pois->orderBy($sort, 'desc');
+                } elseif ($sort === 'comments') {
+                    $pois->orderBy($sort, 'desc');
+                }
+                
             }
 
             if ($bounds) {
@@ -96,7 +103,7 @@ class PoiController extends Controller
                     ->where('poi.lat', '<', max($nelat, $swlat))
                     ->where('poi.lat', '>', min($nelat, $swlat));
                 if ($alreadyLoaded) {
-                    $pois->whereNotIn('id', explode(',', $alreadyLoaded));
+                    $pois->whereNotIn('poi.id', explode(',', $alreadyLoaded));
                 }
 
                 $pois->select(
