@@ -277,19 +277,25 @@ export default {
                   alreadyLoaded: this.alreadyLoaded,
                   additional: this.mode === 'chosen' ? this.additional.join('!') : null,
                   otdalenie: this.mode === 'chosen' ? this.otdalenie : null,
-                  limit: 500,
+                  limit: 50,
                 },
                 cancelToken: this.source.token
               }
             )
             data.data = data.data.map(item => ({ ...item, showInfoWindow: false }))
-            this.mappois = [...this.mappois, ...data.data] ;
+            this.mappois = [...this.mappois, ...data.data];
             this.mappois = this.mappois.filter((mappois, index, self) =>
               index === self.findIndex((t) => (
                 t.id === mappois.id
               ))
             )
-            this.loading = false
+            this.loading = false;
+            if (data.data.length > 0) {
+              setTimeout(function (){
+                this.fetchPoisToMap()
+              }.bind(this), 500);
+              return;
+            }
           }
           catch(e) {
             console.log(e);
