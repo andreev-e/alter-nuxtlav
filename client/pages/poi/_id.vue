@@ -291,7 +291,7 @@ export default {
         if (this.poi.lat) {
           return { lat: this.poi.lat, lng: this.poi.lng }
         } else {
-          return { lat: 0, lng: 0 }
+          return { lat: process.env.defaulLat, lng: process.env.defaultLng }
         }
       }
     },

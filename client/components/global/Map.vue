@@ -136,7 +136,7 @@ export default {
   props: {
     center: {
       type: Object,
-      default: () => ({ lat: 0, lng: 0 })
+      default: () => ({ lat: process.env.defaulLat, lng: process.env.defaultLng })
     },
     tag: {
       type: String,
@@ -255,7 +255,6 @@ export default {
       if (this.$refs.map && this.$refs.map.$mapObject) {
         const bounds = this.$refs.map.$mapObject.getBounds()
         if (!bounds) {
-          console.log('no bounds');
           return;
         }
         this.bounds = bounds.toUrlValue();
@@ -267,7 +266,6 @@ export default {
         if (bounds) {
           try {
             this.loading = true;
-            console.log('request sending...');
             const { data } = await axios.get(
               '/pois',
               { 
@@ -318,7 +316,6 @@ export default {
           scale: 0.01 * Math.log(poi.views + this.logarifm) / Math.log(this.logarifm),
         }
       } else {
-        console.log(poi.type);
         return {
           path: faMapMarker.icon[4],
           fillColor: "#777",
@@ -370,7 +367,6 @@ export default {
     totalDistance(result) {
       var myroute = result.routes[0].legs;
       this.total = myroute.reduce((acc, item) => acc + item.distance.value, 0);
-      console.log(this.total);
       this.total = this.total / 1000;
       this.total = Math.round(this.total * 10) / 10
       if (this.total > 1000) { 
@@ -396,7 +392,6 @@ export default {
       this.mappois = this.mappois.filter(item => this.selectedTypes.indexOf(item.type)>-1)
     },
     recountAdditional () {
-      console.log('recountAdditional');
       this.additional = [];
       // console.log(this.route.overview_polyline);
       for (let index = 0; index < this.route.overview_path.length; index= index + 10) {

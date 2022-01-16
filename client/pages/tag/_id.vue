@@ -39,7 +39,7 @@ export default {
       loadingTag: false,
       pois: [],
       loadingPois: true,
-      center: { lat: null, lng: null },
+      center: { lat: process.env.defaulLat, lng: process.env.defaultLng },
       page: 1,
       pages: null,
       perPage: 12,
@@ -60,7 +60,6 @@ export default {
       title: 'Все ' + this.tag.NAME_ROD + ' на карте. Топ ' + this.tag.count + ' достопримечательность',
       meta: [
         {
-          hid: 'description',
           name: 'description',
           content: 'Все ' + this.tag.NAME_ROD + ' в путеводителе с фото, описаниями, отзывами, картами проезда. Достопримечательности.'
         }
@@ -69,7 +68,7 @@ export default {
   },
   watch: {
     page: {
-      handler (val) {
+      handler () {
         this.fetchPois()
       }
     }

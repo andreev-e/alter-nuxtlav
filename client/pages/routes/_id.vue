@@ -135,7 +135,7 @@ export default {
     return {
       poi: {},
       mapData: {},
-      center: null
+      center: { lat: process.env.defaulLat, lng: process.env.defaultLng }
     }
   },
   async fetch () {

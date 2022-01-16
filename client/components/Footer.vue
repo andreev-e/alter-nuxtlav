@@ -22,12 +22,19 @@
       </template>
     </div>
     <div class="copyright col-sm-4">
-      2009-{{ year }} © Альтернативный путеводитель
+      2009 - {{ year }} © Альтернативный путеводитель
     </div>
     <div class="second_menu col-sm-4">
       <nuxt-link to="/user">
         Авторы
       </nuxt-link>
+    </div>
+    <div class="col-12">
+      <Adsense
+        data-ad-client="ca-pub-2550364618248551"
+        data-ad-slot="3426016451"
+        data-ad-format="auto"
+      />
     </div>
   </div>
 </template>

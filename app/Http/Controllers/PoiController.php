@@ -89,7 +89,6 @@ class PoiController extends Controller
                 } elseif ($sort === 'comments') {
                     $pois->orderBy($sort, 'desc');
                 }
-                
             }
 
             if ($bounds) {

@@ -24,6 +24,8 @@ class TagResource extends JsonResource
             'name' => $this->name,
             'NAME_ROD' => $this->NAME_ROD,
             'NAME_DAT_ED' => $this->NAME_DAT_ED,
+            'NAME_ROD_ED' => $this->NAME_ROD_ED,
+            'NAME_PREDLOZH_ED' => $this->NAME_PREDLOZH_ED,
             'count' => $this->COUNT,
             'url' => $this->url,
             'flag' => $this->flag,

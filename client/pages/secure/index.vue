@@ -59,7 +59,7 @@ export default {
       perPageRoutes: 12,
       pois: [],
       routes: [],
-      center: {},
+      center: { lat: process.env.defaulLat, lng: process.env.defaultLng },
       types: [],
     }
   },

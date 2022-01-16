@@ -29,7 +29,7 @@ export default {
     return {
       loadingPois: true,
       pois: [],
-      center: { lat: null, lng: null },
+      center: { lat: process.env.defaulLat, lng: process.env.defaultLng },
     }
   },
   mounted () {

@@ -44,7 +44,7 @@ export default {
         lng: 0,
         locations: [],
       },
-      center: { lat: null, lng: null },
+      center: { lat: process.env.defaulLat, lng: process.env.defaultLng },
       page: 1,
       pages: null,
       perPage: 12,
@@ -64,18 +64,20 @@ export default {
     await this.fetchTag()
     await this.fetchPois()
   },
-  head: {
-    title: 'Карта достопримечательностей для самостоятельных путешественников',
-    meta: [
-      {
-        name: 'description',
-        content: 'Каталог достопримечательностей на карте. Для самостоятельной организации путешествия!'
-      }
-    ]
+  head() {
+    return {
+      title: 'Топ ' + (this.tag.count < 100 ? this.tag.count : 100) + ' достопримечательностей ' + this.tag.NAME_ROD_ED + ' на карте.',
+      meta: [
+        {
+          name: 'description',
+          content: 'Достопримечательности в путеводителе по ' + this.tag.NAME_DAT_ED + '. Фотографии мест, карты, отзывы.'
+        }
+      ]
+    }
   },
   watch: {
     page: {
-      handler (val) {
+      handler () {
         this.fetchPois()
       }
     }

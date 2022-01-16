@@ -17,6 +17,7 @@
           rounded
           fluid 
         />
+        <p />
         <Adsense
           data-ad-client="ca-pub-2550364618248551"
           data-ad-slot="3426016451"
