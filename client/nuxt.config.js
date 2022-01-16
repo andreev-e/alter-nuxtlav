@@ -14,6 +14,7 @@ module.exports = {
     githubAuth: !!process.env.GITHUB_CLIENT_ID,
     defaulLat: 55.7558,
     defaultLng: 37.6173,
+    poiChunkSize: process.env.POI_CHUNK_SIZE || 99,
   },
 
   head: {

@@ -277,7 +277,7 @@ export default {
                   alreadyLoaded: this.alreadyLoaded,
                   additional: this.mode === 'chosen' ? this.additional.join('!') : null,
                   otdalenie: this.mode === 'chosen' ? this.otdalenie : null,
-                  limit: 50,
+                  limit: process.env.poiChunkSize,
                 },
                 cancelToken: this.source.token
               }
@@ -290,7 +290,7 @@ export default {
               ))
             )
             this.loading = false;
-            if (data.data.length > 0) {
+            if (data.data.length === process.env.poiChunkSize) {
               setTimeout(function (){
                 this.fetchPoisToMap()
               }.bind(this), 500);
