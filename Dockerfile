@@ -33,7 +33,7 @@ WORKDIR $workdir
 
 USER $user
 
-FROM node:alpine
+FROM node:12.11.0
 
 COPY package.json $workdir
 
@@ -43,6 +43,5 @@ RUN npm cache clear --force
 RUN npm i --prefer-dedupe
 
 COPY . $workdir
-
 
 CMD [ "npm","start" ]

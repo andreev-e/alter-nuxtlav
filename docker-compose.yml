@@ -1,14 +1,14 @@
-version: "3.7"
+version: "0.1"
 services:
   app:
     build:
       args:
-        user: andreev
+        user: andreeve
         uid: 1000
       context: ./
       dockerfile: Dockerfile
-    image: altertravel
-    container_name: altertravel-app
+    image: altertravel_img
+    container_name: altertravel_container
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
@@ -18,7 +18,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: altertravel-nginx
+    container_name: altertravel
     restart: unless-stopped
     ports:
       - 8000:80

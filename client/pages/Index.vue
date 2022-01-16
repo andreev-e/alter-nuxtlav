@@ -69,7 +69,7 @@ export default {
       loadingPoisNew: true,
       pois_popular: [],
       loadingPoisPopular: true,
-      center: { lat: 0, lng: 0 },
+      center: { lat: 55.7558, lng: 37.6173 },
       types: [],
       m_names: ['январе', 'феврале', 'марте', 
                'апреле', 'мае', 'июне', 'июле', 
@@ -111,6 +111,7 @@ export default {
   },
   mounted () {
     if (navigator.geolocation) {
+      console.log('Взяли местоположение из браузера');
       navigator.geolocation.getCurrentPosition(
         (position) => {
           this.center = {
