@@ -33,7 +33,7 @@ class PoiController extends Controller
         $author = $request->input('author');
         $sort = $request->input('sort');
         $direction = $request->input('direction');
-        $limit = $request->input('limit') ? $request->input('limit') : 10;
+        $limit = $request->input('limit') ? $request->input('limit') : 12;
 
         if ($only || $otdalenie) {
             $bounds = null;
@@ -51,7 +51,7 @@ class PoiController extends Controller
                 $swlat = (float) round($bounds[2], $presicion);
                 $swlng = (float) round($bounds[3], $presicion);
             }
-    
+
             $pois = Poi::select(
                 'poi.id',
                 'poi.name',
@@ -80,7 +80,7 @@ class PoiController extends Controller
                         }
                     });
             }
-            
+
             if ($sort) {
                 if ($sort === 'date') {
                     $pois->orderBy($sort, 'desc');
@@ -95,7 +95,7 @@ class PoiController extends Controller
                 $centerLng = ($swlng + $nelng) / 2;
                 $centerLat = ($swlat + $nelat) / 2;
                 if ($centerLng === 0 || $centerLat === 0) {
-                    return ;
+                    return response(null, 204);
                 }
                 $pois->where('poi.lng', '<', max($swlng, $nelng))
                     ->where('poi.lng', '>', min($swlng, $nelng))
@@ -106,11 +106,11 @@ class PoiController extends Controller
                 }
 
                 $pois->select(
-                    '*', 
+                    '*',
                     DB::raw("SQRT((poi.lat - $centerLat) * (poi.lat - $centerLat) + (poi.lng - $centerLng) * (poi.lng - $centerLng)) AS fromcenter")
                 );
                 $pois->orderBy('fromcenter', 'asc');
-                
+
             } else {
                 $pois->orderBy('views', 'DESC');
             }
@@ -119,14 +119,14 @@ class PoiController extends Controller
                 $only = explode(',', $only);
                 $pois->whereIn('id', $only);
             }
-    
-            if ($tag) {     
+
+            if ($tag) {
                 $pois->join('relationship', 'poi.id', '=', 'relationship.POSTID');
                 $pois->join('tags', 'relationship.TAGID', '=', 'tags.id');
                 $pois->where('tags.url', '=', $tag);
                 $pois->with('tags');
             }
-    
+
             if (Auth::check() && $my) {
                 $pois->where('author', '=', auth()->user()->olduser->username);
             }
@@ -134,15 +134,15 @@ class PoiController extends Controller
             if ($author) {
                 $pois->where('author', '=', $author);
             }
-    
+
             if ($types) {
                 $pois->whereIn('type', $types);
             }
-                        
+
             if ($page) {
                 $result =  PoiResourceLight::collection($pois->paginate($limit));
             } else {
-                $result =  PoiResourceLight::collection($pois->limit($limit)->get()); 
+                $result =  PoiResourceLight::collection($pois->limit($limit)->get());
             }
 
             Cache::put($cacheKey, $result, 3600);
@@ -151,16 +151,6 @@ class PoiController extends Controller
         // echo '1';
         // return '';
         return $result;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
